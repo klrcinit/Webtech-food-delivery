@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'restaurants/:id', component: RestaurantDetail },
   { path: 'cart', component: Cart },
   { path: 'orders', component: Orders },
+  { path: '', redirectTo: 'restaurants', pathMatch: 'full' },
 ];
 
 @NgModule({
