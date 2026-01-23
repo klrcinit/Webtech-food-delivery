@@ -1,6 +1,20 @@
-<nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
-  <a routerLink="/customer/restaurants">Restaurants</a>
-  <a routerLink="/customer/cart">Cart</a>
-  <a routerLink="/customer/orders">Orders</a>
-</nav>
-<h2>Restaurants</h2>
+<h2>Available Restaurants</h2>
+
+@if (restaurants.length > 0) {
+
+  <div class="restaurant-list">
+    @for (r of restaurants; track r.id) {
+      <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+        <h3>{{ r.name }}</h3>
+        <p><strong>Cuisine:</strong> {{ r.cuisine }}</p>
+        <p><strong>Rating:</strong> {{ r.rating }} ⭐</p>
+        <p><strong>Delivery:</strong> {{ r.delivery_minutes }} min</p>
+        <p><strong>Distance:</strong> {{ r.distance_km }} km</p>
+        <button>View Menu</button>
+      </div>
+    }
+  </div>
+
+} @else {
+  <p>Loading restaurants... (Please wait or check if Backend is running!)</p>
+}
