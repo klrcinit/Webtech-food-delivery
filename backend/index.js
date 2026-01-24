@@ -13,7 +13,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "postgres", // Uporabljamo kar default bazo
-  password: "postgres",
+  password: "root",
   port: 5432,
 });
 

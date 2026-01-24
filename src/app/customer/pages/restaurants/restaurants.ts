@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 // Importamo servis, ki smo ga pravkar uredili
 import { RestaurantService } from '../../services/restaurant.service';
 
@@ -13,7 +13,10 @@ export class Restaurants implements OnInit {
   // Tukaj bomo shranili podatke, ki pridejo iz baze
   restaurants: any[] = [];
 
-  constructor(private restaurantService: RestaurantService) {}
+  constructor(
+    private restaurantService: RestaurantService,
+  private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     console.log("Začenjam nalaganje restavracij...");
@@ -21,7 +24,9 @@ export class Restaurants implements OnInit {
       next: (data) => {
         this.restaurants = data;
         console.log('Uspeh! Podatki iz baze:', data);
-      },
+        this.restaurants = data;
+        this.cdr.detectChanges();
+        },
       error: (err) => {
         console.error('Napaka pri povezavi:', err);
       }
