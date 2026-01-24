@@ -10,7 +10,7 @@
         <p><strong>Rating:</strong> {{ r.rating }} ⭐</p>
         <p><strong>Delivery:</strong> {{ r.delivery_minutes }} min</p>
         <p><strong>Distance:</strong> {{ r.distance_km }} km</p>
-        <button>View Menu</button>
+        <button [routerLink]="['/customer/restaurants', r.id]">View Menu</button>
       </div>
     }
   </div>
