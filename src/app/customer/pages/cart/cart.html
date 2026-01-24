@@ -3,4 +3,40 @@
   <a routerLink="/customer/cart">Cart</a>
   <a routerLink="/customer/orders">Orders</a>
 </nav>
-<h2>Cart</h2>
+
+<div style="padding: 20px;">
+  <h2>Your Cart 🛒</h2>
+
+  @if (items.length === 0) {
+    <div style="text-align: center; margin-top: 50px;">
+      <p>Košarica je prazna. Lačna? 🍕</p>
+      <a routerLink="/customer/restaurants" style="color: blue; text-decoration: underline;">Pojdi nazaj na meni</a>
+    </div>
+  }
+
+  @else {
+    <div style="max-width: 600px;">
+
+      @for (item of items; track item.name) {
+        <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+          <span>{{ item.name }}</span>
+          <strong>{{ item.price }} €</strong>
+        </div>
+      }
+
+      <div style="margin-top: 20px; text-align: right; font-size: 1.2em;">
+        Total: <strong>{{ total }} €</strong>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button (click)="clearCart()" style="background: red; color: white; padding: 10px; border: none; cursor: pointer; border-radius: 4px;">
+          Izprazni
+        </button>
+        <button (click)="checkout()" style="background: green; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px;">
+          Naroči (Checkout)
+        </button>
+      </div>
+
+    </div>
+  }
+</div>

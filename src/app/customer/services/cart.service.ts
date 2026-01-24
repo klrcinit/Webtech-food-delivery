@@ -1,0 +1,30 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CartService {
+
+  // Tukaj bomo shranjevali izbrane jedi
+  private items: any[] = [];
+
+  constructor() { }
+
+  // 1. Dodaj v košarico
+  addToCart(product: any) {
+    this.items.push(product);
+    console.log('Dodano v košarico:', product.name);
+    alert(product.name + ' je dodana v košarico! 🛒');
+  }
+
+  // 2. Dobi vse izdelke (za prikaz v košarici)
+  getItems() {
+    return this.items;
+  }
+
+  // 3. Izprazni košarico (po nakupu)
+  clearCart() {
+    this.items = [];
+    return this.items;
+  }
+}
