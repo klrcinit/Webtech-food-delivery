@@ -45,6 +45,39 @@ app.get("/api/restaurants", async (req, res) => {
   }
 });
 
+// create new order
+app.post("/api/orders", async (req, res) => {
+  const { user_id, items } = req.body;
+
+  if (!user_id || !items || items.length === 0) {
+    return res.status(400).json({ error: "Invalid order data" });
+  }
+
+  try {
+    // create order
+    const orderResult = await pool.query(
+      "INSERT INTO orders (user_id) VALUES ($1) RETURNING id",
+      [user_id]
+    );
+
+    const orderId = orderResult.rows[0].id;
+
+    // insert order items
+    for (const item of items) {
+      await pool.query(
+        "INSERT INTO order_items (order_id, dish_id, quantity) VALUES ($1, $2, $3)",
+        [orderId, item.dish_id, item.quantity]
+      );
+    }
+
+    res.status(201).json({ message: "Order created", order_id: orderId });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log("Backend running on http://localhost:" + PORT);
 });
