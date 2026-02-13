@@ -13,10 +13,13 @@ export class RestaurantService {
   constructor(private http: HttpClient) {}
 
   // Metoda, ki dejansko pokliče backend
-  getRestaurants(): Observable<any[]> {
+  getRestaurants() {
     return this.http.get<any[]>(this.apiUrl);
   }
-  getRestaurant(id: string): Observable<any> {
+
+  getRestaurant(id: string) {
+    console.log("SERVICE CALLED WITH:", id);
+    console.log("FULL URL:", `${this.apiUrl}/${id}`);
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 }

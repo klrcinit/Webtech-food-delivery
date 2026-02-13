@@ -2,12 +2,14 @@ import { Component, OnInit} from '@angular/core'
 import { ActivatedRoute } from '@angular/router';
 import { RestaurantService } from '../../services/restaurant.service';
 import { CartService } from '../../services/cart.service';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-restaurant-detail',
   standalone: false,
   templateUrl: './restaurant-detail.html',
-  styleUrl: './restaurant-detail.css',
+  styleUrls: ['./restaurant-detail.css']
 })
 export class RestaurantDetail implements OnInit {
   restaurant: any = null;
@@ -15,28 +17,31 @@ export class RestaurantDetail implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private restaurantService: RestaurantService,
-    private cartService: CartService
-  ) {}
+    private cartService: CartService,
+  private cdr: ChangeDetectorRef
+) {}
 
   ngOnInit(): void {
-    console.log("RestaurantDetail loaded");
+      const id = this.route.snapshot.paramMap.get('id');
+      console.log("ID:", id);
 
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      console.log("ID from route:", id);
+      if (!id) {
+      console.log("ID is null — route param not found");
+      return;
+    }
 
-      if (id) {
-        this.restaurantService.getRestaurant(id).subscribe({
-          next: (data) => {
-            console.log("DATA FROM BACKEND:", data);
-            this.restaurant = data;
-          },
-          error: (err) => {
-            console.error("ERROR FROM BACKEND:", err);
-          }
-        });
+    this.restaurantService.getRestaurant(id).subscribe({
+      next: (data) => {
+        console.log("RESPONSE:", data);
+        this.restaurant = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.log("HTTP ERROR:", err);
       }
     });
+
+
   }
 
   addToCart(dish: any) {

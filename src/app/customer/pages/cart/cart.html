@@ -9,7 +9,7 @@
 
   @if (items.length === 0) {
     <div style="text-align: center; margin-top: 50px;">
-      <p>Košarica je prazna. Lačna? 🍕</p>
+      <p>The cart is empty. Hungry? 🍕</p>
       <a routerLink="/customer/restaurants" style="color: blue; text-decoration: underline;">Pojdi nazaj na meni</a>
     </div>
   }
@@ -17,10 +17,10 @@
   @else {
     <div style="max-width: 600px;">
 
-      @for (item of items; track item.name) {
+      @for (item of items; track item.id) {
         <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
-          <span>{{ item.name }}</span>
-          <strong>{{ item.price }} €</strong>
+          <span>{{ item.name }} x{{ item.quantity }}</span>
+          <strong>{{ item.price * item.quantity }} €</strong>
         </div>
       }
 

@@ -5,7 +5,7 @@ import { CartService } from '../../services/cart.service';
   selector: 'app-cart',
   standalone: false,
   templateUrl: './cart.html',
-  styleUrl: './cart.css',
+  styleUrls: ['./cart.css']
 })
 export class Cart implements OnInit {
 
@@ -33,7 +33,8 @@ export class Cart implements OnInit {
 
   // Funkcija za gumb Izprazni
   clearCart() {
-    this.items = this.cartService.clearCart();
+    this.cartService.clearCart();
+    this.items = [];
     this.total = 0;
   }
 
