@@ -6,13 +6,23 @@ import { Injectable } from '@angular/core';
 export class CartService {
 
   // Tukaj bomo shranjevali izbrane jedi
-  private items: any[] = [];
+  private items: any[] = JSON.parse(localStorage.getItem('cart') || '[]');
 
   constructor() { }
 
   // 1. Dodaj v košarico
   addToCart(product: any) {
-    this.items.push(product);
+    const existing = this.items.find(item => item.id === product.id);
+
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      this.items.push({
+        ...product,
+        quantity: 1
+      });
+    }
+    localStorage.setItem('cart', JSON.stringify(this.items));
     console.log('Dodano v košarico:', product.name);
     alert(product.name + ' je dodana v košarico! 🛒');
   }
@@ -25,6 +35,7 @@ export class CartService {
   // 3. Izprazni košarico (po nakupu)
   clearCart() {
     this.items = [];
+    localStorage.removeItem('cart');
     return this.items;
   }
 }

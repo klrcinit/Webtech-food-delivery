@@ -19,17 +19,23 @@ export class RestaurantDetail implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("RestaurantDetail loaded");
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-    if (id) {
-      this.restaurantService.getRestaurant(id).subscribe({
-        next: (data) => {
-          this.restaurant = data;
-          console.log("Restaurant loaded:", data);
-        },
-        error: (err) => console.error(err)
-      });
-    }
+      console.log("ID from route:", id);
+
+      if (id) {
+        this.restaurantService.getRestaurant(id).subscribe({
+          next: (data) => {
+            console.log("DATA FROM BACKEND:", data);
+            this.restaurant = data;
+          },
+          error: (err) => {
+            console.error("ERROR FROM BACKEND:", err);
+          }
+        });
+      }
     });
   }
 

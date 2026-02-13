@@ -1,20 +1,26 @@
 <h2>Available Restaurants</h2>
 
-@if (restaurants.length > 0) {
+<div *ngIf="restaurants.length > 0; else loading">
 
   <div class="restaurant-list">
-    @for (r of restaurants; track r.id) {
-      <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
-        <h3>{{ r.name }}</h3>
-        <p><strong>Cuisine:</strong> {{ r.cuisine }}</p>
-        <p><strong>Rating:</strong> {{ r.rating }} ⭐</p>
-        <p><strong>Delivery:</strong> {{ r.delivery_minutes }} min</p>
-        <p><strong>Distance:</strong> {{ r.distance_km }} km</p>
-        <button [routerLink]="['/customer/restaurants', r.id]">View Menu</button>
-      </div>
-    }
+    <div *ngFor="let r of restaurants; trackBy: trackById"
+         style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+
+      <h3>{{ r.name }}</h3>
+      <p><strong>Cuisine:</strong> {{ r.cuisine }}</p>
+      <p><strong>Rating:</strong> {{ r.rating }} ⭐</p>
+      <p><strong>Delivery:</strong> {{ r.delivery_minutes }} min</p>
+      <p><strong>Distance:</strong> {{ r.distance_km }} km</p>
+
+      <button [routerLink]="['/customer/restaurants', r.id]">
+        View Menu
+      </button>
+
+    </div>
   </div>
 
-} @else {
-  <p>Loading restaurants... (Please wait or check if Backend is running!)</p>
-}
+</div>
+
+<ng-template #loading>
+  <p>Loading restaurants...</p>
+</ng-template>

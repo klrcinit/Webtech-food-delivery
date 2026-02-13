@@ -24,10 +24,11 @@ export class Cart implements OnInit {
 
   // Pomožna funkcija za seštevanje
   calculateTotal() {
-    this.total = 0;
-    for (let item of this.items) {
-      this.total += Number(item.price);
-    }
+    console.log("Cart items:", this.items);
+    this.total = this.items.reduce(
+    (sum, item) => sum + Number(item.price) * item.quantity,
+      0
+  );
   }
 
   // Funkcija za gumb Izprazni
@@ -42,9 +43,9 @@ export class Cart implements OnInit {
       user_id: 1, // temporary hardcoded user
       items: this.items.map(item => ({
         dish_id: item.id,
-        quantity: 1
-      }))
-    };
+        quantity: item.quantity }
+      ))
+    }
 
     fetch("http://localhost:3000/api/orders", {
       method: "POST",

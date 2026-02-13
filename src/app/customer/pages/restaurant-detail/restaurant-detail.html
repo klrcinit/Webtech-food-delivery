@@ -4,36 +4,33 @@
   <a routerLink="/customer/orders">Orders</a>
 </nav>
 
-@if (restaurant) {
+<div *ngIf="restaurant; else loading">
 
   <div style="padding: 20px;">
-    <h2 style="margin-top: 0;">{{ restaurant.name }}</h2>
-    <p>Ocena: {{ restaurant.rating }} ⭐ | Dostava: {{ restaurant.delivery_minutes }} min</p>
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <h2>{{ restaurant.name }}</h2>
+    <p>Ocena: {{ restaurant.rating }} ⭐</p>
 
     <h3>Menu 🍕</h3>
 
-    <div class="menu-list">
-      @for (dish of restaurant.dishes; track dish.id) {
-        <div style="border: 1px solid #eee; margin-bottom: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; background: #fff;">
+    <div *ngFor="let dish of restaurant.dishes"
+         style="border:1px solid #eee; margin-bottom:10px; padding:15px; display:flex; justify-content:space-between; border-radius:8px;">
 
-          <div>
-            <strong style="font-size: 1.1em;">{{ dish.name }}</strong>
-            <div style="color: #666; margin-top: 4px;">{{ dish.price }} €</div>
-          </div>
+      <div>
+        <strong>{{ dish.name }}</strong>
+        <div>{{ dish.price }} €</div>
+      </div>
 
-          <button (click)="addToCart(dish)"
-                  style="background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold;">
-            Add to Cart
-          </button>
+      <button (click)="addToCart(dish)">
+        Add to Cart
+      </button>
 
-        </div>
-      }
     </div>
   </div>
+</div>
 
-} @else {
-  <div style="padding: 20px; text-align: center; color: #666;">
-    <p>Loading menu...</p>
+<ng-template #loading>
+  <div style="padding:20px; text-align:center;">
+    Loading menu...
   </div>
-}
+</ng-template>
+
