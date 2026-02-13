@@ -24,6 +24,8 @@ export class CartService {
       });
     }
     this.updateCart();
+    console.log('Dodano v košarico:', product.name);
+    alert(product.name + ' je dodana v košarico! 🛒');
   }
 
   // 2. Dobi vse izdelke (za prikaz v košarici)
