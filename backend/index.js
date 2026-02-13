@@ -21,13 +21,25 @@ app.get("/api/restaurants/:id", async (req, res) => {
   const { id } = req.params;
   try {
     // SQL: Najdi tisto, ki ima ta ID
-    const result = await pool.query('SELECT * FROM restaurants WHERE id = $1', [id]);
+    const restaurantResult = await pool.query(
+      "SELECT * FROM restaurants WHERE id = $1",
+      [id]
+    );
 
-    if (result.rows.length === 0) {
+    if (restaurantResult.rows.length === 0) {
       return res.status(404).json({ error: "Restavracija ne obstaja" });
     }
 
-    res.json(result.rows[0]);
+    const restaurant = restaurantResult.rows[0];
+
+    const dishesResult = await pool.query(
+      "SELECT * FROM dishes WHERE restaurant_id = $1",
+      [id]
+    );
+
+    restaurant.dishes = dishesResult.rows;
+
+    res.json(restaurant);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });

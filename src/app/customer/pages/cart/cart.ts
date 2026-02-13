@@ -36,9 +36,33 @@ export class Cart implements OnInit {
     this.total = 0;
   }
 
-  // Funkcija za gumb Naroči
+  // Funkcija za gumb
   checkout() {
-    alert('Successfully checkout! :)');
+    const orderData = {
+      user_id: 1, // temporary hardcoded user
+      items: this.items.map(item => ({
+        dish_id: item.id,
+        quantity: 1
+      }))
+    };
+
+    fetch("http://localhost:3000/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(orderData)
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Order response:", data);
+        alert("Order successfully placed!");
+        this.clearCart();
+      })
+      .catch(error => {
+        console.error("Checkout error:", error);
+        alert("Error placing order.");
+      });
   }
 
 }

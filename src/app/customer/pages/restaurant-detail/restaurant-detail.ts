@@ -19,13 +19,18 @@ export class RestaurantDetail implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
     if (id) {
       this.restaurantService.getRestaurant(id).subscribe({
-        next: (data) => this.restaurant = data,
+        next: (data) => {
+          this.restaurant = data;
+          console.log("Restaurant loaded:", data);
+        },
         error: (err) => console.error(err)
       });
     }
+    });
   }
 
   addToCart(dish: any) {
