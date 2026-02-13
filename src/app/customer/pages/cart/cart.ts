@@ -24,12 +24,23 @@ export class Cart implements OnInit {
 
   // Pomožna funkcija za seštevanje
   calculateTotal() {
-    console.log("Cart items:", this.items);
     this.total = this.items.reduce(
     (sum, item) => sum + Number(item.price) * item.quantity,
       0
   );
   }
+    increase(item: any) {
+      this.cartService.increaseQuantity(item);
+      this.items = this.cartService.getItems();
+      this.calculateTotal();
+    }
+
+    decrease(item: any) {
+      this.cartService.decreaseQuantity(item);
+      this.items = this.cartService.getItems();
+      this.calculateTotal();
+    }
+
 
   // Funkcija za gumb Izprazni
   clearCart() {
@@ -66,5 +77,4 @@ export class Cart implements OnInit {
         alert("Error placing order.");
       });
   }
-
 }

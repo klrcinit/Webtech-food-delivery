@@ -8,7 +8,8 @@ export class CartService {
   // Tukaj bomo shranjevali izbrane jedi
   private items: any[] = JSON.parse(localStorage.getItem('cart') || '[]');
 
-  constructor() { }
+  constructor() {
+  }
 
   // 1. Dodaj v košarico
   addToCart(product: any) {
@@ -22,9 +23,7 @@ export class CartService {
         quantity: 1
       });
     }
-    localStorage.setItem('cart', JSON.stringify(this.items));
-    console.log('Dodano v košarico:', product.name);
-    alert(product.name + ' je dodana v košarico! 🛒');
+    this.updateCart();
   }
 
   // 2. Dobi vse izdelke (za prikaz v košarici)
@@ -37,5 +36,23 @@ export class CartService {
     this.items = [];
     localStorage.removeItem('cart');
     return this.items;
+  }
+
+  increaseQuantity(item: any) {
+    item.quantity++;
+    this.updateCart();
+  }
+
+  decreaseQuantity(item: any) {
+    if (item.quantity > 1) {
+      item.quantity--;
+    } else {
+      this.items = this.items.filter(i => i.id !== item.id);
+    }
+    this.updateCart();
+  }
+
+  private updateCart() {
+    localStorage.setItem('cart', JSON.stringify(this.items));
   }
 }

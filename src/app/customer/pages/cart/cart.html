@@ -19,8 +19,19 @@
 
       @for (item of items; track item.id) {
         <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
-          <span>{{ item.name }} x{{ item.quantity }}</span>
-          <strong>{{ item.price * item.quantity }} €</strong>
+          <div>
+            <strong>{{ item.name }}</strong>
+            <div style="margin-top: 5px; display: flex; align-items: center; gap: 8px;">
+              <button (click)="decrease(item)">−</button>
+              <span>x{{ item.quantity }}</span>
+              <button (click)="increase(item)">+</button>
+            </div>
+          </div>
+
+          <strong>
+            {{ (item.price * item.quantity) | number:'1.2-2' }} €
+          </strong>
+
         </div>
       }
 
