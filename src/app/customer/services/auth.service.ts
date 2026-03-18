@@ -27,14 +27,10 @@ export class AuthService {
   }
 
   changePassword(userId: number, password: string) {
-    const token = localStorage.getItem("token");
     return this.http.put(
       `http://localhost:3000/api/users/${userId}/password`,
       {password},
       {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
       }
     );
   }
@@ -47,17 +43,9 @@ export class AuthService {
   }
 
   updateUser(userId:number,data:any){
-
-    const token = localStorage.getItem("token");
-
     return this.http.put(
       `http://localhost:3000/api/users/${userId}`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
+      data
     );
   }
 }
