@@ -1,6 +1,56 @@
-<nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
-  <a routerLink="/customer/restaurants">Restaurants</a>
-  <a routerLink="/customer/cart">Cart</a>
-  <a routerLink="/customer/orders">Orders</a>
-</nav>
 <h2>Orders</h2>
+
+<div *ngIf="loading">
+  Loading orders...
+</div>
+
+<div *ngIf="!loading && orders.length === 0">
+  No orders yet.
+</div>
+
+<!-- ACTIVE ORDERS -->
+<h3>Active Orders</h3>
+
+<div *ngFor="let order of orders">
+  <div *ngIf="getRemainingMinutes(order) > 0"
+       style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:6px;">
+
+    <h3>{{ order.restaurant_name }}</h3>
+
+    <p>
+      Status:
+      <span *ngIf="getOrderStatus(order) === 'Preparing'">🍳 Preparing</span>
+      <span *ngIf="getOrderStatus(order) === 'On the way'">🚗 On the way</span>
+    </p>
+
+    <p>Arriving in {{ getRemainingMinutes(order) }} min</p>
+
+    <p style="color:#666;">
+      Ordered at: {{ order.created_at | date:'HH:mm' }}
+    </p>
+
+  </div>
+</div>
+
+
+<!-- PREVIOUS ORDERS -->
+<h3>Previous Orders</h3>
+
+<div *ngFor="let order of orders">
+  <div *ngIf="getOrderStatus(order) === 'Delivered'"
+       style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:6px;">
+
+    <h3>{{ order.restaurant_name }}</h3>
+
+    <p>Status: ✅ Delivered</p>
+
+    <p style="color:#666;">
+      Ordered at: {{ order.created_at | date:'HH:mm' }}
+    </p>
+
+  </div>
+</div>
+
+
+
+

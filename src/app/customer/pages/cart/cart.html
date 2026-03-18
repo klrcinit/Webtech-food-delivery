@@ -1,9 +1,3 @@
-<nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
-  <a routerLink="/customer/restaurants">Restaurants</a>
-  <a routerLink="/customer/cart">Cart</a>
-  <a routerLink="/customer/orders">Orders</a>
-</nav>
-
 <div style="padding: 20px;">
   <h2>Your Cart 🛒</h2>
 
@@ -36,18 +30,74 @@
       }
 
       <div style="margin-top: 20px; text-align: right; font-size: 1.2em;">
-        Total: <strong>{{ total }} €</strong>
+
+        <div>
+          Subtotal: <strong>{{ total | number:'1.2-2' }} €</strong>
+          @if (!freeDeliveryReached) {
+            <div style="color:#666; font-size:0.9em;">
+              Add {{ (40 - total) | number:'1.2-2' }} € more for free delivery 🚚
+            </div>
+          }
+
+          <div>
+            Delivery:
+            @if (freeDeliveryReached) {
+              <span style="color:green;">Free 🚚</span>
+            } @else {
+              {{ deliveryFee | number:'1.2-2' }} €
+            }
+          </div>
+
+        </div>
+
+      @if (discount > 0) {
+          <div style="color:green;">
+            Discount: -{{ discount | number:'1.2-2' }} €
+          </div>
+        }
+
+        <div style="font-weight:bold;">
+          Final total: {{ (total + deliveryFee - discount) | number:'1.2-2' }} €
+        </div>
+
       </div>
+
+      <div style="margin-top:8px;">
+
+        <div style="background:#eee; height:10px; border-radius:6px; overflow:hidden;">
+
+          <div
+            style="height:100%;"
+            [style.background]="freeDeliveryReached ? '#4caf50' : '#ffc107'"            [style.width.%]="freeDeliveryProgress">
+          </div>
+
+        </div>
+
+      </div>
+
+      <div style="margin-top:10px">
+        <input
+          type="text"
+          placeholder="Voucher code"
+          [(ngModel)]="voucherCode"
+        />
+
+        <button (click)="applyVoucher()" [disabled]="discount > 0">
+          Apply voucher
+        </button>
+      </div>
+
 
       <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
         <button (click)="clearCart()" style="background: red; color: white; padding: 10px; border: none; cursor: pointer; border-radius: 4px;">
-          Izprazni
+          Empty Cart
         </button>
-        <button (click)="checkout()" style="background: green; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px;">
-          Naroči (Checkout)
+        <button (click)="checkout()"
+                [disabled]="items.length === 0"
+                style="background: green; color: white; padding: 10px 20px; border: none; border-radius: 4px;">
+          Checkout
         </button>
       </div>
-
-    </div>
+</div>
   }
 </div>

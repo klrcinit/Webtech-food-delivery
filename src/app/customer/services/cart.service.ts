@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,8 @@ export class CartService {
 
   // Tukaj bomo shranjevali izbrane jedi
   private items: any[] = JSON.parse(localStorage.getItem('cart') || '[]');
+
+  cartCount$ = new BehaviorSubject<number>(this.getCartItemCount());
 
   constructor() {
   }
@@ -37,6 +40,7 @@ export class CartService {
   clearCart() {
     this.items = [];
     localStorage.removeItem('cart');
+    this.cartCount$.next(0);
     return this.items;
   }
 
@@ -56,5 +60,10 @@ export class CartService {
 
   private updateCart() {
     localStorage.setItem('cart', JSON.stringify(this.items));
+    this.cartCount$.next(this.getCartItemCount());
+  }
+
+  getCartItemCount(): number {
+    return this.items.reduce((sum, item) => sum + item.quantity, 0);
   }
 }
