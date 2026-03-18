@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class CartService {
 
   cartCount$ = new BehaviorSubject<number>(this.getCartItemCount());
 
-  constructor() {
+    constructor(private http: HttpClient) {
   }
 
   // 1. Dodaj v košarico
@@ -66,4 +67,8 @@ export class CartService {
   getCartItemCount(): number {
     return this.items.reduce((sum, item) => sum + item.quantity, 0);
   }
+
+    checkout(orderData: any) {
+      return this.http.post('http://localhost:3000/api/orders', orderData);
+    }
 }

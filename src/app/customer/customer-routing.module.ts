@@ -9,6 +9,7 @@ import { Login } from './pages/login/login';
 import { AuthGuard } from '../auth.guard';
 import { Register } from './pages/register/register';
 import { ForgotPassword } from './pages/login/forgot-password/forgot-password';
+import { Profile } from './pages/profile/profile';
 const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'restaurants/:id', component: RestaurantDetail, canActivate: [AuthGuard] },
   { path: 'cart', component: Cart, canActivate: [AuthGuard] },
   { path: 'orders', component: Orders, canActivate: [AuthGuard] },
+  { path: 'profile', component: Profile, canActivate: [AuthGuard] },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

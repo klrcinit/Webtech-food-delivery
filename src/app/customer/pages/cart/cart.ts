@@ -81,36 +81,18 @@ export class Cart implements OnInit {
         quantity: item.quantity }
       ))
         };
-    const token = localStorage.getItem("token");
-        fetch("http://localhost:3000/api/orders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(orderData)
-        })
-          .then(async res => {
-            const data = await res.json();
-
-            if (!res.ok) {
-              throw new Error(data.error || "Order failed");
-            }
-
-            return data;
-          })
-          .then(data => {
-            console.log("Order response:", data);
-            alert("Order successfully placed!");
-            this.clearCart();
-
-            window.location.href = "/customer/orders";
-          })
-          .catch(error => {
-            console.error("Checkout error:", error);
-            alert("Error placing order.");
-          });
-
+    this.cartService.checkout(orderData).subscribe({
+      next: (data) => {
+        console.log("Order response:", data);
+        alert("Order successfully placed!");
+        this.clearCart();
+        window.location.href = "/customer/orders";
+      },
+      error: (error) => {
+        console.error("Checkout error:", error);
+        alert("Error placing order.");
+      }
+    });
       }
   applyVoucher() {
 

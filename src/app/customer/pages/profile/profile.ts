@@ -8,23 +8,41 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './profile.css',
 })
 export class Profile {
-  email = "";
   newPassword = "";
   message = "";
+  loading = false;
+  confirmPassword = "";
+  showPassword = false;
+  passwordStrength = "";
 
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    const email = localStorage.getItem("email");
-    this.email = email || "";
+    this.user.email = localStorage.getItem("email") || "";
+    this.user.location_x = Number(localStorage.getItem("location_x")) || 0;
+    this.user.location_y = Number(localStorage.getItem("location_y")) || 0;
   }
 
+  user: any = {
+    email: '',
+    location_x: 0,
+    location_y: 0
+  };
+
   changePassword(){
+    this.message = "";
 
     if(this.newPassword.length < 6){
       this.message = "Password must be at least 6 characters";
       return;
     }
+
+    if(this.newPassword !== this.confirmPassword){
+      this.message = "Passwords do not match";
+      return;
+    }
+
+    this.loading = true;
 
     const userId = Number(localStorage.getItem("user_id"));
 
@@ -32,30 +50,64 @@ export class Profile {
       .subscribe({
         next: () => {
           this.message = "Password updated";
+          this.loading = false;
+
+          this.newPassword = "";
+          this.confirmPassword = "";
+          this.passwordStrength = "";
+
+          setTimeout(() => {
+            this.message = "";
+          }, 3000);
         },
         error: () => {
           this.message = "Error updating password";
+          this.loading = false;
         }
       });
 
   }
 
-  updateProfile(){
+  getPasswordStrength(password: string): string {
 
+    if (!password) return "";
+
+    let score = 0;
+
+    if (password.length >= 6) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+
+    if (score <= 1) return "Weak";
+    if (score === 2) return "Medium";
+    return "Strong";
+  }
+
+  updateProfile(){
+    this.message = "";
+    this.loading = true;
     const userId = Number(localStorage.getItem("user_id"));
 
-    const data = {
-      email: this.email
-    };
-
-    this.authService.updateUser(userId,data)
+    this.authService.updateUser(userId, this.user)
       .subscribe({
         next: () => {
           this.message = "Profile updated";
-          localStorage.setItem("email", this.email);
+          this.loading = false;
+
+          setTimeout(() => {
+            this.message = "";
+          }, 3000);
+
+
+          // shrani v localStorage
+          localStorage.setItem("email", this.user.email);
+          localStorage.setItem("location_x", this.user.location_x.toString());
+          localStorage.setItem("location_y", this.user.location_y.toString());
         },
         error: () => {
           this.message = "Error updating profile";
+          this.loading = false;
         }
       });
 

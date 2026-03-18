@@ -1,20 +1,119 @@
 <h2>Profile</h2>
 
-<label>Email</label>
-<input [(ngModel)]="email">
+<div style="margin-bottom:15px;">
+<label>Email</label><br>
+<input [(ngModel)]="user.email">
+</div>
 
-<button (click)="updateProfile()">
-  Save profile
+<div style="margin-bottom: 15px;">
+<label>Your location (X coordinate)</label><br>
+<input [(ngModel)]="user.location_x">
+</div>
+
+<div style="margin-bottom: 15px;">
+<label>Your location (Y coordinate)</label><br>
+<input [(ngModel)]="user.location_y">
+</div>
+
+<p style="font-size:12px; color:gray; margin-bottom:15px;">
+  Used to calculate distance to restaurants
+</p>
+
+<button (click)="updateProfile()"
+        [disabled]="loading"
+        style="margin-bottom:20px; position: relative; padding:10px 20px;">
+  <span *ngIf="!loading">Save profile</span>
+
+  <span *ngIf="loading" class="spinner"></span>
 </button>
 
-<input type="password"
-       placeholder="New password"
-       [(ngModel)]="newPassword">
+<hr>
 
-<button (click)="changePassword()">
-  Change password
+
+<div style="margin-top:20px;">
+  <label>New password</label><br>
+  <div style="position: relative; display: inline-block;">
+<input [type]="showPassword ? 'text' : 'password'"
+       [(ngModel)]="newPassword"
+  (input)="passwordStrength = getPasswordStrength(newPassword)"
+  style="padding-right:40px;">
+
+
+  <div *ngIf="newPassword" style="margin-top:8px;">
+
+    <div style="height:6px; border-radius:4px; background:#eee;">
+      <div [style.width]="
+           passwordStrength === 'Weak' ? '33%' :
+           passwordStrength === 'Medium' ? '66%' : '100%'"
+           [style.background]="
+           passwordStrength === 'Weak' ? 'red' :
+           passwordStrength === 'Medium' ? 'orange' : 'green'"
+           style="height:6px; border-radius:4px;">
+      </div>
+    </div>
+
+    <small>
+<span *ngIf="passwordStrength === 'Weak'" style="color:red;">
+    Weak – add number or symbol
+  </span>
+
+      <span *ngIf="passwordStrength === 'Medium'" style="color:orange;">
+    Medium – good but can improve
+  </span>
+
+      <span *ngIf="passwordStrength === 'Strong'" style="color:green;">
+    Strong password
+  </span>
+    </small>
+
+  </div>
+
+  <span (click)="showPassword = !showPassword"
+        style="position:absolute; right:10px; top:50%;
+                 transform:translateY(-50%);
+                 cursor:pointer;">
+      👁️
+    </span>
+</div>
+
+<div style="margin-top:15px;">
+  <label>Confirm password</label><br>
+
+  <input [type]="showPassword ? 'text' : 'password'"
+         [(ngModel)]="confirmPassword"
+  [style.border]="
+  confirmPassword
+  ? (newPassword === confirmPassword ? '2px solid green' : '2px solid red')
+  : '1px solid #ccc'">
+  <div *ngIf="confirmPassword" style="margin-top:5px;">
+    <small [style.color]="
+            newPassword === confirmPassword ? 'green' : 'red'">
+
+      {{ newPassword === confirmPassword
+      ? '✓ Passwords match'
+      : 'Passwords do not match' }}
+
+    </small>
+  </div>
+
+</div>
+
+<button (click)="changePassword()"
+        [disabled]="loading
+        || newPassword.length < 6
+|| newPassword !== confirmPassword
+|| passwordStrength === 'Weak'"
+        style="position: relative; padding:10px 20px;">
+
+  <span *ngIf="!loading">Change password</span>
+
+  <span *ngIf="loading" class="spinner"></span>
 </button>
 
-<div *ngIf="message">
+<div *ngIf="message"
+     class="toast"
+     [class.success]="message.includes('updated')"
+     [class.error]="message.includes('Error')">
   {{ message }}
+</div>
 </div>
