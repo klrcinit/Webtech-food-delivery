@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+.restaurant-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+@media (max-width:768px) {
+
+  .restaurant-grid {
+    grid-template-columns:1fr;
+  }
+
+  nav {
+    flex-direction: column;
+  }
+
+}

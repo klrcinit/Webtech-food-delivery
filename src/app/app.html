@@ -1,4 +1,20 @@
-<router-outlet>
+<nav *ngIf="isLoggedIn()" style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
+  <a routerLink="/customer/restaurants">Restaurants</a>
 
+  <a routerLink="/customer/cart">
+    Cart ({{ cartItemCount }})
+  </a>
 
-</router-outlet>
+  <a routerLink="/customer/orders">
+    Orders
+  </a>
+
+  <span style="margin-left:auto">
+    Logged in as {{ userEmail }}
+  </span>
+
+</nav>
+
+<button *ngIf="isLoggedIn()" (click)="logout()">Logout</button>
+
+<router-outlet></router-outlet>
