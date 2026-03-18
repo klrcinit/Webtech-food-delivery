@@ -1,0 +1,20 @@
+<h2>Profile</h2>
+
+<label>Email</label>
+<input [(ngModel)]="email">
+
+<button (click)="updateProfile()">
+  Save profile
+</button>
+
+<input type="password"
+       placeholder="New password"
+       [(ngModel)]="newPassword">
+
+<button (click)="changePassword()">
+  Change password
+</button>
+
+<div *ngIf="message">
+  {{ message }}
+</div>

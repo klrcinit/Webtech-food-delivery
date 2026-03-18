@@ -1,0 +1,39 @@
+<div style="max-width:400px; margin:50px auto">
+
+  <h2>Register</h2>
+
+  <input
+    type="email"
+    placeholder="Email"
+    [(ngModel)]="email"
+    style="width:100%; margin-bottom:10px"
+  />
+
+  <input
+    type="password"
+    placeholder="Password"
+    [(ngModel)]="password"
+    style="width:100%; margin-bottom:10px"
+  />
+
+  <input
+    type="text"
+    placeholder="Address"
+    [(ngModel)]="address"
+    style="width:100%; margin-bottom:10px"
+  />
+
+  <button type="button" (click)="register()" style="width:100%">
+    Register
+  </button>
+
+  <div *ngIf="errorMessage" style="color:red; margin-top:10px;">
+    {{ errorMessage }}
+  </div>
+
+  <p>
+    Already have an account?
+    <a routerLink="/customer/login">Login</a>
+  </p>
+
+</div>
