@@ -1,6 +1,8 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CartService } from './customer/services/cart.service';
 import { Router } from '@angular/router';
+import { LoadingService } from './customer/services/loading.service';
+import { ToastService } from './customer/services/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +12,9 @@ import { Router } from '@angular/router';
 })
 export class App implements OnInit {
 
+  loading$;
+  toast$;
+
   protected readonly title = signal('webtech-food-delivery');
 
   cartItemCount: number = 0;
@@ -17,8 +22,12 @@ export class App implements OnInit {
 
   constructor(
     private cartService: CartService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private loadingService: LoadingService,
+    private toastService: ToastService
+  ) {
+    this.loading$ = this.loadingService.loading$;
+    this.toast$ = this.toastService.message$; }
 
   ngOnInit() {
 

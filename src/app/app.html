@@ -18,3 +18,13 @@
 <button *ngIf="isLoggedIn()" (click)="logout()">Logout</button>
 
 <router-outlet></router-outlet>
+
+<!-- LOADING -->
+<div *ngIf="loading$ | async" class="global-loader">
+  <div class="spinner"></div>
+</div>
+
+<!-- TOAST -->
+<div *ngIf="toast$ | async as msg" class="toast">
+  {{ msg }}
+</div>
