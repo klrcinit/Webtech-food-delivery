@@ -24,7 +24,7 @@ export class RestaurantService {
   // Metoda, ki dejansko pokliče backend
   getRestaurants(){
 
-    return this.http.get<any[]>(`/api/restaurants`);
+    return this.http.get<any[]>('http://localhost:3000/api/restaurants');
   }
 
   getRestaurant(id: number): Observable<any> {
@@ -44,7 +44,7 @@ export class RestaurantService {
   }
 
   updateUser(userId: number, data: any) {
-    return this.http.put(`/api/users/${userId}`, data);
+    return this.http.put(`http://localhost:3000/api/users/${userId}`, data);
   }
 
 }

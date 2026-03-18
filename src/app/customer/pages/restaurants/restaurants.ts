@@ -34,11 +34,15 @@ export class Restaurants implements OnInit {
 
     const userId = Number(localStorage.getItem("user_id") || 0);
     this.restaurantService.getRestaurants().subscribe({
-      next: (data: any[]) => {
+      next: (data: any) => {
 
-        this.restaurants = [...data];
-        this.originalRestaurants = [...data];
-        this.filteredRestaurants = [...data];
+        console.log("DATA FROM BACKEND:", data);
+
+        const restaurants = data.restaurants || data;
+
+        this.restaurants = [...restaurants];
+        this.originalRestaurants = [...restaurants];
+        this.filteredRestaurants = [...restaurants];
         this.loading = false;
 
         this.loadUserFavorites();
@@ -91,7 +95,11 @@ export class Restaurants implements OnInit {
         this.cdr.detectChanges();
         },
       error: (err) => {
-        console.error('Napaka pri povezavi:', err);
+        console.log("FULL ERROR:", err);
+        console.log("STATUS:", err.status);
+        console.log("MESSAGE:", err.message);
+        console.log("ERROR BODY:", err.error);
+        this.loading = false;
       }
     });
   }

@@ -37,10 +37,6 @@ export class Login implements OnInit {
     this.errorMessage = "";
 
     this.authService.login(this.email, this.password)
-
-    this.errorMessage = "";
-
-    this.authService.login(this.email, this.password)
       .subscribe({
 
         next: (user: any) => {
