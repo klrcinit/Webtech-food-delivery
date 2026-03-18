@@ -1,36 +1,125 @@
-<nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
-  <a routerLink="/customer/restaurants">Restaurants</a>
-  <a routerLink="/customer/cart">Cart</a>
-  <a routerLink="/customer/orders">Orders</a>
-</nav>
-
-<div *ngIf="restaurant; else loading">
-
-  <div style="padding: 20px;">
-    <h2>{{ restaurant.name }}</h2>
-    <p>Ocena: {{ restaurant.rating }} ⭐</p>
-
-    <h3>Menu 🍕</h3>
-
-    <div *ngFor="let dish of restaurant.dishes"
-         style="border:1px solid #eee; margin-bottom:10px; padding:15px; display:flex; justify-content:space-between; border-radius:8px;">
-
-      <div>
-        <strong>{{ dish.name }}</strong>
-        <div>{{ dish.price }} €</div>
-      </div>
-
-      <button (click)="addToCart(dish)">
-        Add to Cart
-      </button>
-
-    </div>
-  </div>
+<div *ngIf="!restaurant">
+  Loading menu...
 </div>
 
-<ng-template #loading>
-  <div style="padding:20px; text-align:center;">
-    Loading menu...
+<div *ngIf="restaurant">
+  <div style="padding: 20px;">
+    <h2>{{ restaurant.name }}</h2>
+    <p>
+      ⭐ {{ restaurant.rating | number:'1.1-1' }}
+      ({{ reviews?.length || 0 }} reviews)
+    </p>
+
+    <h3 style="margin-top:20px;">🍜 Menu</h3>
+
+    <div *ngFor="let dish of restaurant?.dishes"
+         style="border:1px solid #eee; margin-bottom:10px; padding:15px; border-radius:8px;">
+
+      <div style="display:flex; justify-content:space-between;">
+
+        <div>
+          <strong>{{ dish.name }}</strong>
+          <div>{{ dish.price }} €</div>
+          <div style="font-size:13px;color:#777;">
+            ★  {{ dish.rating | number:'1.1-1' }}
+            <span *ngIf="dish.review_count > 0">
+                  ({{ dish.review_count }} ratings)
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <button (click)="addToCart(dish)">
+            Add to Cart
+          </button>
+
+          <button (click)="selectedDish = dish; dishRating = 0; hoverRating = 0"
+                  style="background:none;border:none;color:#666;cursor:pointer;font-size:13px;margin-left:10px;">
+            ⭐ Rate dish
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="selectedDish?.id === dish.id"
+           style="margin-top:10px;">
+
+        <span
+          *ngFor="let star of [1,2,3,4,5]"
+          (click)="dishRating = star"
+          (mouseenter)="hoverRating = star"
+          (mouseleave)="hoverRating = 0"
+          [style.color]="star <= hoverRating || star <= dishRating ? '#FFC107' : '#ddd'"
+          style="cursor:pointer;font-size:22px;">
+
+★
+</span>
+
+        <button (click)="reviewDish(dish)" style="margin-left:10px;">
+          Submit
+        </button>
+
+      </div>
   </div>
-</ng-template>
+  </div>
+  <button (click)="showReviewForm = !showReviewForm"
+          style="margin-top:20px;padding:8px 12px;">
+    ⭐ Leave a review
+  </button>
+
+  <div *ngIf="showReviewForm" style="margin-top:15px;margin-bottom:20px;">
+
+    <label>Rating:</label>
+
+    <div style="font-size:24px; cursor:pointer;">
+
+<span *ngFor="let star of [1,2,3,4,5]"
+      (click)="restaurantRating = star"
+      (mouseenter)="hoverRating = star"
+      (mouseleave)="hoverRating = 0"
+      [style.color]="star <= hoverRating || star <= restaurantRating ? '#FFC107' : '#ddd'"
+      style="cursor:pointer;font-size:28px;transition:0.2s">
+
+      ★
+
+    </span>
+
+    </div>
+
+    <br>
+
+    <textarea
+      [(ngModel)]="comment"
+      placeholder="Write your review"
+      style="width:300px;height:80px">
+  </textarea>
+
+    <br><br>
+
+    <button (click)="submitReview()">
+      Submit review
+    </button>
+
+  </div>
+
+  <h3>Customer Reviews</h3>
+
+  <div *ngFor="let r of reviews"
+       style="border:1px solid #eee; padding:12px; margin-bottom:10px; border-radius:6px; background:#fafafa">
+
+    <div>
+ <span *ngFor="let star of [].constructor(Math.round(r.rating))"
+       style="font-size:18px;color:#FFC107;">
+⭐
+</span>
+    </div>
+
+    <p>{{ r.comment }}</p>
+
+    <small style="color:#777">
+      {{ r.created_at | date:'short' }}
+    </small>
+  </div>
+
+</div>
+
 

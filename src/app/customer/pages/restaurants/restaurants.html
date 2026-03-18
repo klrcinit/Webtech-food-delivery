@@ -1,26 +1,123 @@
-<h2>Available Restaurants</h2>
 
-<div *ngIf="restaurants.length > 0; else loading">
+<h2>⭐ Your Favorites</h2>
+<div class="recommendations">
+  <div *ngFor="let r of favoriteRestaurants" class="recommend-card">
+    <h3>{{ r.name }}</h3>
+    <p>
+      ⭐ {{ r.user_rating | number:'1.1-1' }}
+      ⏱ {{ r.delivery_minutes }} min
+      📍 {{ r.distance_km }} km
+
+    </p>
+    <a [routerLink]="['/customer/restaurants', r.id]"
+       style="padding:6px 12px;border:1px solid #ccc;">
+      View Menu
+    </a>
+  </div>
+</div>
+
+<!-- Show message if empty -->
+<div *ngIf="favoriteRestaurants.length === 0">
+  <p>⭐ You haven't rated any restaurants yet.</p>
+  <br>
+  Try ordering and reviewing a restaurant to see favorites here.
+</div>
+
+<h2>🔁 Order Again</h2>
+<div class="recommendations">
+  <div *ngFor="let r of orderedRestaurants" class="recommend-card">
+    <h3>{{ r.name }}</h3>
+    <p>
+      ⭐ {{ r.rating | number:'1.1-1' }}
+      ⏱ {{ r.delivery_minutes }} min
+      📍 {{ r.distance_km }} km
+    </p>
+    <a [routerLink]="['/customer/restaurants', r.id]"
+       style="padding:6px 12px;border:1px solid #ccc;">
+      View Menu
+    </a>
+  </div>
+</div>
+
+<h2>🔥 Popular Near You</h2>
+<div class="recommendations">
+  <div *ngFor="let r of popularRestaurants" class="recommend-card">
+    <h3>{{ r.name }}</h3>
+    <p>
+      ⭐ {{ r.rating | number:'1.1-1' }}
+      ⏱ {{ r.delivery_minutes }} min
+      📍 {{ r.distance_km }} km
+    </p>
+    <a [routerLink]="['/customer/restaurants', r.id]"
+       style="padding:6px 12px;border:1px solid #ccc;">
+      View Menu
+    </a>
+  </div>
+</div>
+
+
+<h2>Available Restaurants</h2>
+<div style="margin-bottom:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+
+  <input
+    type="text"
+    placeholder="Search restaurant or cuisine"
+    [(ngModel)]="selectedCuisine"
+    (ngModelChange)="filterRestaurants()"
+  />
+
+  <label>Sort by:</label>
+
+  <select [(ngModel)]="sortOption" (change)="applySorting()">
+    <option value="">None</option>
+    <option value="rating_desc">Top rated ⭐</option>
+    <option value="rating_asc">Lowest rated</option>
+    <option value="delivery_asc">Fastest delivery ⏱</option>
+    <option value="delivery_desc">Slowest delivery</option>
+    <option value="distance_asc">Closest distance 📍</option>
+    <option value="distance_desc">Farthest distance</option>
+  </select>
+
+  <button (click)="resetFilters()">
+    Reset
+  </button>
+
+</div>
+
+<!-- Loading message -->
+<div *ngIf="loading">
+  <p>Loading restaurants...</p>
+</div>
+
+
+<!-- Restaurant list -->
+<div *ngIf="!loading && filteredRestaurants.length > 0">
 
   <div class="restaurant-list">
-    <div *ngFor="let r of restaurants; trackBy: trackById"
-         style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+    <div *ngFor="let r of filteredRestaurants; trackBy: trackById"
+         class="restaurant-card">
 
       <h3>{{ r.name }}</h3>
-      <p><strong>Cuisine:</strong> {{ r.cuisine }}</p>
-      <p><strong>Rating:</strong> {{ r.rating }} ⭐</p>
-      <p><strong>Delivery:</strong> {{ r.delivery_minutes }} min</p>
-      <p><strong>Distance:</strong> {{ r.distance_km }} km</p>
+      <p>
+        ⭐ {{ r.rating | number:'1.1-1' }}
+        ⏱ {{ r.delivery_minutes }} min
+        📍 {{ r.distance_km }} km
+      </p>
 
-      <button [routerLink]="['/customer/restaurants', r.id]">
+      <p>
+        🍽 {{ r.cuisine }}
+      </p>
+
+      <a [routerLink]="['/customer/restaurants', r.id]"
+         style="padding:6px 12px;border:1px solid #ccc;">
         View Menu
-      </button>
+      </a>
 
     </div>
   </div>
 
 </div>
 
-<ng-template #loading>
-  <p>Loading restaurants...</p>
-</ng-template>
+<div *ngIf="!loading && filteredRestaurants.length === 0">
+  🔍 No results match your search.
+</div>
