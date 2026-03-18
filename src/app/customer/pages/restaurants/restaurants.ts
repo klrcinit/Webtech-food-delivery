@@ -33,7 +33,7 @@ export class Restaurants implements OnInit {
     console.log("Začenjam nalaganje restavracij...");
 
     const userId = Number(localStorage.getItem("user_id") || 0);
-    this.restaurantService.getRestaurants(userId).subscribe({
+    this.restaurantService.getRestaurants().subscribe({
       next: (data: any[]) => {
 
         this.restaurants = [...data];
