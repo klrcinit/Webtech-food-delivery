@@ -1,25 +1,25 @@
-.restaurant-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
+* {
+  box-sizing: border-box;
 }
 
-@media (max-width:768px) {
+body {
+  margin: 0;
+}
 
-  .restaurant-grid {
-    grid-template-columns:1fr;
-  }
-
-  nav {
-    flex-direction: column;
-  }
-
+.restaurant-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(12px, 2vw, 20px);
 }
 
 .toast {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+  max-width: 90%;
+  text-align: center;
   background: black;
   color: white;
   padding: 14px 22px;
@@ -28,6 +28,32 @@
   z-index: 9999;
   box-shadow: 0 5px 20px rgba(0,0,0,0.2);
   animation: fadeIn 0.3s ease;
+  pointer-events: none;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+}
+
+@media (max-width: 480px) {
+
+  .restaurant-grid {
+    gap: 12px;
+  }
+
+  nav {
+    font-size: 14px;
+  }
+
+}
+
+@media (hover: none) {
+  button:hover {
+    background-color: black;
+  }
 }
 
 @keyframes fadeIn {
@@ -39,4 +65,57 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ===== NAVBAR ===== */
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 25px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #eee;
+  flex-wrap: nowrap;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+}
+
+.nav-user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== CARD (Favorites box) ===== */
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+/* ===== TITLE ===== */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
 }

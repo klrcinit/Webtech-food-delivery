@@ -29,3 +29,45 @@
     transform: rotate(360deg);
   }
 }
+
+.main-nav {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  align-items: center;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: black;
+}
+
+.main-nav a:hover {
+  text-decoration: underline;
+}
+
+.main-nav button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.nav-user {
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .main-nav {
+    flex-wrap: wrap;
+  }
+
+  .nav-user {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+.main-nav a.active {
+  color: black;
+}

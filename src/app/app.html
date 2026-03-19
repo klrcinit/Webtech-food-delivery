@@ -1,21 +1,28 @@
-<nav *ngIf="isLoggedIn() && !isLoginPage()" style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
-  <a routerLink="/customer/restaurants">Restaurants</a>
+<nav *ngIf="isLoggedIn() && !isLoginPage()" class="main-nav">
+  <a routerLink="/customer/restaurants" routerLinkActive="active"
+     [routerLinkActiveOptions]="{ exact: true }">Restaurants</a>
 
-  <a routerLink="/customer/cart">
+  <a routerLink="/customer/cart" routerLinkActive="active"
+     [routerLinkActiveOptions]="{ exact: true }">
     Cart ({{ cartItemCount }})
   </a>
 
-  <a routerLink="/customer/orders">
+  <a routerLink="/customer/orders" routerLinkActive="active"
+     [routerLinkActiveOptions]="{ exact: true }">
     Orders
   </a>
 
-  <a routerLink="/customer/profile">Profile</a>
+  <a routerLink="/customer/profile" routerLinkActive="active"
+     [routerLinkActiveOptions]="{ exact: true }">
+     Profile</a>
 
-  <span style="margin-left:auto">
+  <span class="nav-user">
     Logged in as {{ userEmail }}
   </span>
 
-  <button (click)="logout()">Logout</button>
+  <button type="button" (click)="logout()" aria-label="Logout">
+    Logout
+  </button>
 
 </nav>
 <router-outlet></router-outlet>
