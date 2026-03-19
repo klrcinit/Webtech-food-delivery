@@ -1,5 +1,6 @@
-
-<h2>⭐ Your Favorites</h2>
+<div class="container">
+  <div class="card">
+<h2>⭐ Your Favorites</h2></div>
 <div class="recommendations">
   <div *ngFor="let r of favoriteRestaurants" class="recommend-card">
     <h3>{{ r.name }}</h3>
@@ -10,7 +11,7 @@
 
     </p>
     <a [routerLink]="['/customer/restaurants', r.id]"
-       style="padding:6px 12px;border:1px solid #ccc;">
+       class="menu-btn">
       View Menu
     </a>
   </div>
@@ -23,7 +24,8 @@
   Try ordering and reviewing a restaurant to see favorites here.
 </div>
 
-<h2>🔁 Order Again</h2>
+<div class="card">
+  <h2>🔁 Order Again</h2></div>
 <div class="recommendations">
   <div *ngFor="let r of orderedRestaurants" class="recommend-card">
     <h3>{{ r.name }}</h3>
@@ -33,13 +35,14 @@
       📍 {{ r.distance_km }} km
     </p>
     <a [routerLink]="['/customer/restaurants', r.id]"
-       style="padding:6px 12px;border:1px solid #ccc;">
+       class="menu-btn">
       View Menu
     </a>
   </div>
 </div>
 
-<h2>🔥 Popular Near You</h2>
+  <div class="card">
+    <h2>🔥 Popular Near You</h2></div>
 <div class="recommendations">
   <div *ngFor="let r of popularRestaurants" class="recommend-card">
     <h3>{{ r.name }}</h3>
@@ -49,15 +52,15 @@
       📍 {{ r.distance_km }} km
     </p>
     <a [routerLink]="['/customer/restaurants', r.id]"
-       style="padding:6px 12px;border:1px solid #ccc;">
+       class="menu-btn">
       View Menu
     </a>
   </div>
 </div>
 
-
-<h2>Available Restaurants</h2>
-<div style="margin-bottom:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+    <div class="card">
+<h2>Available Restaurants</h2></div>
+<div class="filter-bar">
 
   <input
     type="text"
@@ -109,7 +112,7 @@
       </p>
 
       <a [routerLink]="['/customer/restaurants', r.id]"
-         style="padding:6px 12px;border:1px solid #ccc;">
+         class="menu-btn">
         View Menu
       </a>
 
@@ -121,3 +124,4 @@
 <div *ngIf="!loading && filteredRestaurants.length === 0">
   🔍 No results match your search.
 </div>
+    </div>
