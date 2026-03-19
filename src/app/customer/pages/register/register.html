@@ -6,28 +6,100 @@
     type="email"
     placeholder="Email"
     [(ngModel)]="email"
+    #emailRef="ngModel"
+    required
     style="width:100%; margin-bottom:10px"
   />
 
-  <input
-    type="password"
-    placeholder="Password"
-    [(ngModel)]="password"
-    style="width:100%; margin-bottom:10px"
-  />
+  <div *ngIf="emailRef.invalid && (emailRef.touched || emailRef.dirty)"
+       style="color:red; font-size:12px;">
+    Please enter a valid email
+  </div>
 
-  <input
-    type="text"
-    placeholder="Address"
-    [(ngModel)]="address"
-    style="width:100%; margin-bottom:10px"
-  />
+  <div style="position: relative; display: inline-block;">
 
-  <button type="button" (click)="register()" style="width:100%">
-    Register
+    <input [type]="showPassword ? 'text' : 'password'"
+           [(ngModel)]="password"
+           (input)="passwordStrength = getPasswordStrength(password)"
+           style="padding-right:40px;">
+
+    <div style="margin-top:15px;">
+      <label>Confirm password</label><br>
+
+      <input [type]="showPassword ? 'text' : 'password'"
+             [(ngModel)]="confirmPassword"
+             [style.border]="
+  confirmPassword
+  ? (password === confirmPassword ? '2px solid green' : '2px solid red')
+  : '1px solid #ccc'">
+
+      <div *ngIf="confirmPassword" style="margin-top:5px;">
+        <small [style.color]="
+            password === confirmPassword ? 'green' : 'red'">
+
+          {{ password === confirmPassword
+          ? '✓ Passwords match'
+          : 'Passwords do not match' }}
+
+        </small>
+      </div>
+    </div>
+
+    <div *ngIf="password" style="margin-top:8px;">
+
+      <div style="height:6px; border-radius:4px; background:#eee;">
+        <div [style.width]="
+         passwordStrength === 'Weak' ? '33%' :
+         passwordStrength === 'Medium' ? '66%' : '100%'"
+             [style.background]="
+         passwordStrength === 'Weak' ? 'red' :
+         passwordStrength === 'Medium' ? 'orange' : 'green'"
+             style="height:6px; border-radius:4px;">
+        </div>
+      </div>
+
+      <small>
+    <span *ngIf="passwordStrength === 'Weak'" style="color:red;">
+      Weak – add number or symbol
+    </span>
+
+        <span *ngIf="passwordStrength === 'Medium'" style="color:orange;">
+      Medium – good but can improve
+    </span>
+
+        <span *ngIf="passwordStrength === 'Strong'" style="color:green;">
+      Strong password
+    </span>
+      </small>
+
+    </div>
+
+    <span (click)="showPassword = !showPassword"
+          style="position:absolute; right:10px; top:50%;
+             transform:translateY(-50%);
+             cursor:pointer;">
+  👁️
+</span>
+
+  </div>
+
+  <label>City</label>
+  <input [(ngModel)]="address" placeholder="Enter your city">
+
+  <button (click)="register()"
+          [disabled]="
+    password.length < 6 ||
+    passwordStrength === 'Weak'||
+  password !== confirmPassword
+  || emailRef.invalid"
+  style="position: relative; padding:10px 20px;">
+    <span *ngIf="!loading">Register</span>
+    <span *ngIf="loading">Loading...</span>
   </button>
 
-  <div *ngIf="errorMessage" style="color:red; margin-top:10px;">
+  <div *ngIf="errorMessage"
+       [style.color]="errorMessage.includes('successful') ? 'green' : 'red'"
+       style="margin-top:10px;">
     {{ errorMessage }}
   </div>
 

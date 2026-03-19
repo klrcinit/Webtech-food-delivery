@@ -17,6 +17,10 @@ export class Register {
   location_x = 5;
   location_y = 5;
   errorMessage = "";
+  passwordStrength = "";
+  showPassword = false;
+  confirmPassword = "";
+  loading = false;
 
   constructor(
     private authService: AuthService,
@@ -28,6 +32,7 @@ export class Register {
   register() {
 
     this.errorMessage = "";
+    this.loading = true;
 
     const location_x = Math.floor(Math.random() * 10);
     const location_y = Math.floor(Math.random() * 10);
@@ -41,14 +46,20 @@ export class Register {
     ).subscribe({
 
       next: () => {
-        alert("Registration successful. Please log in.");
+        this.errorMessage = "Registration successful! Please log in.";
+        this.loading = false;
+        this.email = "";
+        this.password = "";
+        this.confirmPassword = "";
+        this.address = "";
+        this.passwordStrength = "";
 
-        this.router.navigate(['/customer/login']);
-
+        setTimeout(() => {
+          this.router.navigate(['/customer/login']);
+        }, 1500);
       },
-
       error: (err) => {
-
+        this.loading = false;
         console.log("Register error:", err);
 
         if (err.error && err.error.error) {
@@ -62,6 +73,21 @@ export class Register {
       }
 
     });
+  }
+  getPasswordStrength(password: string): string {
+
+    if (!password) return "";
+
+    let score = 0;
+
+    if (password.length >= 6) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+
+    if (score <= 1) return "Weak";
+    if (score === 2) return "Medium";
+    return "Strong";
   }
 }
 
