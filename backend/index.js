@@ -360,7 +360,8 @@ app.get("/api/users/:userId/favorites", authenticateToken, async (req, res) => {
 // Register new user
 app.post("/api/register", async (req, res) => {
 
-  const { email, password, location_x, location_y } = req.body;
+  let { email, password, location_x, location_y, address } = req.body;
+  email = email.trim().toLowerCase();
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password required" });
@@ -380,10 +381,10 @@ app.post("/api/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      `INSERT INTO users (email, password, location_x, location_y, role)
-   VALUES ($1,$2,$3,$4,$5)
-   RETURNING id,email,role`,
-      [email, hashedPassword, location_x || 0, location_y || 0, 'customer']
+      `INSERT INTO users (email, password, location_x, location_y, address, role)
+   VALUES ($1,$2,$3,$4,$5,$6)
+   RETURNING id,email,address,role`,
+      [email, hashedPassword, location_x || 0, location_y || 0, address || null, 'customer']
     );
 
     res.status(201).json(result.rows[0]);
@@ -562,7 +563,7 @@ function authenticateToken(req, res, next) {
 app.put("/api/users/:id", authenticateToken, async (req, res) => {
 
   const { id } = req.params;
-  const { email, location_x, location_y } = req.body;
+  const { email, location_x, location_y, address } = req.body;
 
   if (parseInt(id) !== req.user.id)
     return res.status(403).json({ error: "Forbidden" });
@@ -571,15 +572,29 @@ app.put("/api/users/:id", authenticateToken, async (req, res) => {
     return res.status(400).json({ error: "Email required" });
   }
 
+  if (!email.includes("@") || !email.includes(".")) {
+    return res.status(400).json({ error: "Invalid email" });
+  }
+
   try {
+
+    const existing = await pool.query(
+      "SELECT id FROM users WHERE email = $1 AND id != $2",
+      [email, id]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ error: "Email already in use" });
+    }
 
     await pool.query(
       `UPDATE users
        SET email = $1,
            location_x = $2,
-           location_y = $3
-       WHERE id = $4`,
-      [email, location_x || 0, location_y || 0, id]
+           location_y = $3,
+           address = $4
+       WHERE id = $5`,
+      [email, location_x || 0, location_y || 0, address || null,  id]
     );
 
     res.json({ message: "Profile updated" });
