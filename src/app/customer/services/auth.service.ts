@@ -26,10 +26,10 @@ export class AuthService {
     });
   }
 
-  changePassword(userId: number, password: string) {
+  changePassword(userId: number, oldPassword: string, newPassword: string) {
     return this.http.put(
       `http://localhost:3000/api/users/${userId}/password`,
-      {password},
+      {oldPassword, newPassword},
       {
       }
     );

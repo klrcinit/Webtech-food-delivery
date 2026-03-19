@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
@@ -14,7 +15,7 @@ export class ForgotPassword {
   newPassword = "";
   message = "";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   resetPassword() {
 
@@ -24,6 +25,10 @@ export class ForgotPassword {
     }).subscribe({
       next: () => {
         this.message = "Password successfully reset";
+
+        setTimeout(() => {
+          this.router.navigate(['/customer/login']);
+        }, 1500);
       },
       error: () => {
         this.message = "Error resetting password";
