@@ -1,6 +1,8 @@
+<div class="page-container">
+  <div class="content-card">
+
 <h2>Profile</h2>
 
-<div style="margin-bottom:15px;">
 <label>Email</label><br>
   <input
     [(ngModel)]="user.email"
@@ -12,12 +14,9 @@
        style="color:red; font-size:12px;">
     Please enter a valid email
   </div>
-</div>
 
-<div style="margin-bottom:15px;">
   <label>City</label><br>
   <input [(ngModel)]="user.address">
-</div>
 
 <div style="display:none;">
 <div style="margin-bottom: 15px;">
@@ -46,19 +45,20 @@
 
 <hr>
 
-<div style="margin-top:20px;">
   <label>Current password</label><br>
   <input type="password" [(ngModel)]="oldPassword">
-</div>
 
-<div style="margin-top:20px;">
   <label>Enter a new password</label><br>
-  <div style="position: relative; display: inline-block;">
-<input [type]="showPassword ? 'text' : 'password'"
+    <div class="password-wrapper">
+    <input [type]="showPassword ? 'text' : 'password'"
        [(ngModel)]="newPassword"
-  (input)="passwordStrength = getPasswordStrength(newPassword)"
-  style="padding-right:40px;">
+  (input)="passwordStrength = getPasswordStrength(newPassword)">
 
+    <span (click)="showPassword = !showPassword" class="eye-icon">
+    👁️
+  </span>
+
+  </div>
 
   <div *ngIf="newPassword" style="margin-top:8px;">
 
@@ -72,7 +72,6 @@
            style="height:6px; border-radius:4px;">
       </div>
     </div>
-
     <small>
 <span *ngIf="passwordStrength === 'Weak'" style="color:red;">
     Weak – add number or symbol
@@ -89,23 +88,23 @@
 
   </div>
 
-  <span (click)="showPassword = !showPassword"
-        style="position:absolute; right:10px; top:50%;
-                 transform:translateY(-50%);
-                 cursor:pointer;">
-      👁️
-    </span>
-</div>
-
 <div style="margin-top:15px;">
   <label>Confirm password</label><br>
 
-  <input [type]="showPassword ? 'text' : 'password'"
-         [(ngModel)]="confirmPassword"
-  [style.border]="
-  confirmPassword
-  ? (newPassword === confirmPassword ? '2px solid green' : '2px solid red')
-  : '1px solid #ccc'">
+  <div class="password-wrapper">
+
+    <input [type]="showPassword ? 'text' : 'password'"
+           [(ngModel)]="confirmPassword"
+           [style.border]="
+           confirmPassword
+           ? (newPassword === confirmPassword ? '2px solid green' : '2px solid red')
+           : '1px solid #ccc'">
+
+    <span (click)="showPassword = !showPassword" class="eye-icon">
+    👁️
+  </span>
+
+  </div>
   <div *ngIf="confirmPassword" style="margin-top:5px;">
     <small [style.color]="
             newPassword === confirmPassword ? 'green' : 'red'">
@@ -138,3 +137,6 @@
   {{ message }}
 </div>
 </div>
+</div>
+
+
