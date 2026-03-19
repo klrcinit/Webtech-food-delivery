@@ -1,9 +1,54 @@
+/* CONTAINER */
+.page-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* CARD */
+.content-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
 button {
   background-color: black;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  width: 100%;              /* responsive */
+  padding: 12px;            /* boljši mobile UX */
+  font-weight: bold;
 }
 
 button:disabled {
@@ -40,4 +85,27 @@ button:disabled {
   10% { opacity: 1; transform: translateY(0); }
   90% { opacity: 1; }
   100% { opacity: 0; transform: translateY(20px); }
+}
+
+@media (max-width: 600px) {
+  .content-card {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 20px;
+    text-align: center;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .content-card {
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .content-card {
+    max-width: 700px;
+  }
 }
