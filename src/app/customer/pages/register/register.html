@@ -1,4 +1,5 @@
-<div style="max-width:400px; margin:50px auto">
+<div class="page-container">
+  <div class="content-card">
 
   <h2>Register</h2>
 
@@ -8,7 +9,6 @@
     [(ngModel)]="email"
     #emailRef="ngModel"
     required
-    style="width:100%; margin-bottom:10px"
   />
 
   <div *ngIf="emailRef.invalid && (emailRef.touched || emailRef.dirty)"
@@ -16,16 +16,22 @@
     Please enter a valid email
   </div>
 
-  <div style="position: relative; display: inline-block;">
+    <label>Password</label>
+    <div class="password-wrapper">
+      <input [type]="showPassword ? 'text' : 'password'"
+             [(ngModel)]="password"
+             (input)="passwordStrength = getPasswordStrength(password)"
+             style="padding-right:40px;">
 
-    <input [type]="showPassword ? 'text' : 'password'"
-           [(ngModel)]="password"
-           (input)="passwordStrength = getPasswordStrength(password)"
-           style="padding-right:40px;">
+      <span (click)="showPassword = !showPassword"
+            style="position:absolute; right:10px; top:50%;
+               transform:translateY(-50%);
+               cursor:pointer;">
+    👁️
+  </span>
+    </div>
 
-    <div style="margin-top:15px;">
       <label>Confirm password</label><br>
-
       <input [type]="showPassword ? 'text' : 'password'"
              [(ngModel)]="confirmPassword"
              [style.border]="
@@ -42,7 +48,6 @@
           : 'Passwords do not match' }}
 
         </small>
-      </div>
     </div>
 
     <div *ngIf="password" style="margin-top:8px;">
@@ -74,15 +79,6 @@
 
     </div>
 
-    <span (click)="showPassword = !showPassword"
-          style="position:absolute; right:10px; top:50%;
-             transform:translateY(-50%);
-             cursor:pointer;">
-  👁️
-</span>
-
-  </div>
-
   <label>City</label>
   <input [(ngModel)]="address" placeholder="Enter your city">
 
@@ -91,15 +87,13 @@
     password.length < 6 ||
     passwordStrength === 'Weak'||
   password !== confirmPassword
-  || emailRef.invalid"
-  style="position: relative; padding:10px 20px;">
+  || emailRef.invalid">
     <span *ngIf="!loading">Register</span>
     <span *ngIf="loading">Loading...</span>
   </button>
 
   <div *ngIf="errorMessage"
-       [style.color]="errorMessage.includes('successful') ? 'green' : 'red'"
-       style="margin-top:10px;">
+       [style.color]="errorMessage.includes('successful') ? 'green' : 'red'">
     {{ errorMessage }}
   </div>
 
@@ -108,4 +102,6 @@
     <a routerLink="/customer/login">Login</a>
   </p>
 
+
+</div>
 </div>

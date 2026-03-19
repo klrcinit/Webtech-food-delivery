@@ -1,4 +1,62 @@
+/* Wrapper spacing */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Inputs */
 input {
-  display:block;
-  margin-bottom:10px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Password container */
+.password-wrapper {
+  position: relative;
+}
+
+/* Eye icon */
+.password-wrapper span {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Messages */
+small {
+  font-size: 12px;
+}
+
+/* Mobile improvement */
+@media (max-width: 480px) {
+  input {
+    font-size: 16px; /* prevents zoom on iPhone */
+  }
+
+  button {
+    font-size: 16px;
+  }
 }
