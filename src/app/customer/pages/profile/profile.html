@@ -2,7 +2,16 @@
 
 <div style="margin-bottom:15px;">
 <label>Email</label><br>
-<input [(ngModel)]="user.email">
+  <input
+    [(ngModel)]="user.email"
+    type="email"
+    required
+    #emailRef="ngModel">
+
+  <div *ngIf="emailRef.invalid && (emailRef.touched || emailRef.dirty)"
+       style="color:red; font-size:12px;">
+    Please enter a valid email
+  </div>
 </div>
 
 <div style="margin-bottom: 15px;">
@@ -16,22 +25,27 @@
 </div>
 
 <p style="font-size:12px; color:gray; margin-bottom:15px;">
-  Used to calculate distance to restaurants
+  Used for distance calculation (simulation of user location)
 </p>
 
 <button (click)="updateProfile()"
-        [disabled]="loading"
+        [disabled]="loading || emailRef.invalid"
         style="margin-bottom:20px; position: relative; padding:10px 20px;">
-  <span *ngIf="!loading">Save profile</span>
 
+  <span *ngIf="!loading">Save profile</span>
   <span *ngIf="loading" class="spinner"></span>
+
 </button>
 
 <hr>
 
+<div style="margin-top:20px;">
+  <label>Current password</label><br>
+  <input type="password" [(ngModel)]="oldPassword">
+</div>
 
 <div style="margin-top:20px;">
-  <label>New password</label><br>
+  <label>Enter a new password to update your current password</label><br>
   <div style="position: relative; display: inline-block;">
 <input [type]="showPassword ? 'text' : 'password'"
        [(ngModel)]="newPassword"
@@ -103,7 +117,7 @@
         || newPassword.length < 6
 || newPassword !== confirmPassword
 || passwordStrength === 'Weak'"
-        style="position: relative; padding:10px 20px;">
+        style="position: relative; padding:10px 20px; margin-top:15px">
 
   <span *ngIf="!loading">Change password</span>
 

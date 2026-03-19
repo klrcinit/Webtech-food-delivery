@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -14,8 +16,9 @@ export class Profile {
   confirmPassword = "";
   showPassword = false;
   passwordStrength = "";
+  oldPassword: string = "";
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private toast: ToastService, private router: Router) {}
 
   ngOnInit() {
     this.user.email = localStorage.getItem("email") || "";
@@ -46,22 +49,28 @@ export class Profile {
 
     const userId = Number(localStorage.getItem("user_id"));
 
-    this.authService.changePassword(userId,this.newPassword)
+    this.authService.changePassword(userId,this.oldPassword, this.newPassword)
       .subscribe({
         next: () => {
-          this.message = "Password updated";
-          this.loading = false;
+          this.message = "Password successfully updated";
 
+          this.toast.show("Password updated. Please login again.");
+
+          this.oldPassword = "";
           this.newPassword = "";
           this.confirmPassword = "";
           this.passwordStrength = "";
 
+          this.loading = false;
+
           setTimeout(() => {
-            this.message = "";
-          }, 3000);
+            localStorage.clear();
+            this.router.navigate(['/customer/login']);
+          }, 1500);
+
         },
-        error: () => {
-          this.message = "Error updating password";
+        error: (err) => {
+          this.message = err?.error?.error || "Error updating password";
           this.loading = false;
         }
       });
@@ -85,9 +94,20 @@ export class Profile {
   }
 
   updateProfile(){
+
     this.message = "";
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(this.user.email)) {
+      this.message = "Invalid email format";
+      return;
+    }
+
+
     this.loading = true;
     const userId = Number(localStorage.getItem("user_id"));
+
 
     this.authService.updateUser(userId, this.user)
       .subscribe({
