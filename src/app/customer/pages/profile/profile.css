@@ -109,3 +109,22 @@ button:disabled {
     max-width: 700px;
   }
 }
+
+.error-text {
+  color: red;
+  font-size: 12px;
+}
+
+.btn-spacing {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.btn-spacing-top {
+  margin-top: 15px;
+  position: relative;
+}
+
+.mt-5 { margin-top: 5px; }
+.mt-8 { margin-top: 8px; }
+.mt-15 { margin-top: 15px; }

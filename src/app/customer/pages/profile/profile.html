@@ -11,7 +11,7 @@
     #emailRef="ngModel">
 
   <div *ngIf="emailRef.invalid && (emailRef.touched || emailRef.dirty)"
-       style="color:red; font-size:12px;">
+       class="error-text">
     Please enter a valid email
   </div>
 
@@ -36,7 +36,7 @@
 
 <button (click)="updateProfile()"
         [disabled]="loading || emailRef.invalid"
-        style="margin-bottom:20px; position: relative; padding:10px 20px;">
+        class="btn-spacing">
 
   <span *ngIf="!loading">Save profile</span>
   <span *ngIf="loading" class="spinner"></span>
@@ -60,7 +60,7 @@
 
   </div>
 
-  <div *ngIf="newPassword" style="margin-top:8px;">
+  <div *ngIf="newPassword" class="mt-8">
 
     <div style="height:6px; border-radius:4px; background:#eee;">
       <div [style.width]="
@@ -123,8 +123,7 @@
         || newPassword.length < 6
 || newPassword !== confirmPassword
 || passwordStrength === 'Weak'"
-        style="position: relative; padding:10px 20px; margin-top:15px">
-
+        class="btn-spacing-top">
   <span *ngIf="!loading">Change password</span>
 
   <span *ngIf="loading" class="spinner"></span>

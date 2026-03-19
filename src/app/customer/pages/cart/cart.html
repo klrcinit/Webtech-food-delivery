@@ -1,4 +1,4 @@
-<div style="padding: 20px;">
+<div class="cart-container">
   <h2>Your Cart 🛒</h2>
 
   @if (items.length === 0) {
@@ -9,10 +9,9 @@
   }
 
   @else {
-    <div style="max-width: 600px;">
-
+    <div class="cart-content">
       @for (item of items; track item.id) {
-        <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+        <div class="cart-item">
           <div>
             <strong>{{ item.name }}</strong>
             <div style="margin-top: 5px; display: flex; align-items: center; gap: 8px;">
@@ -88,7 +87,7 @@
       </div>
 
 
-      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+      <div class="cart-actions">
         <button (click)="clearCart()" style="background: red; color: white; padding: 10px; border: none; cursor: pointer; border-radius: 4px;">
           Empty Cart
         </button>

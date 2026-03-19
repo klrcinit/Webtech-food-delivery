@@ -1,0 +1,26 @@
+/* CONTAINER */
+.orders-container {
+  padding: 20px;
+}
+
+/* CENTERED */
+.orders-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* CARD */
+.order-card {
+  border: 1px solid #ddd;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: white;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .orders-content {
+    padding: 10px;
+  }
+}

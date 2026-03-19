@@ -1,3 +1,6 @@
+<div class="orders-container">
+  <div class="orders-content">
+
 <h2>Orders</h2>
 
 <div *ngIf="loading">
@@ -13,8 +16,7 @@
 
 <div *ngFor="let order of orders">
   <div *ngIf="getRemainingMinutes(order) > 0"
-       style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:6px;">
-
+       class="order-card">
     <h3>{{ order.restaurant_name }}</h3>
 
     <p>
@@ -38,8 +40,7 @@
 
 <div *ngFor="let order of orders">
   <div *ngIf="getOrderStatus(order) === 'Delivered'"
-       style="border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:6px;">
-
+       class="order-card">
     <h3>{{ order.restaurant_name }}</h3>
 
     <p>Status: ✅ Delivered</p>
@@ -48,6 +49,8 @@
       Ordered at: {{ order.created_at | date:'HH:mm' }}
     </p>
 
+  </div>
+</div>
   </div>
 </div>
 
