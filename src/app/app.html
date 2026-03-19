@@ -1,4 +1,4 @@
-<nav *ngIf="isLoggedIn()" style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
+<nav *ngIf="isLoggedIn() && !isLoginPage()" style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
   <a routerLink="/customer/restaurants">Restaurants</a>
 
   <a routerLink="/customer/cart">
@@ -15,12 +15,9 @@
     Logged in as {{ userEmail }}
   </span>
 
-
+  <button (click)="logout()">Logout</button>
 
 </nav>
-
-<button (click)="logout()" style="margin-left:10px;">Logout</button>
-
 <router-outlet></router-outlet>
 
 <!-- LOADING -->

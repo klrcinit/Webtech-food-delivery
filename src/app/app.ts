@@ -52,4 +52,9 @@ export class App implements OnInit {
 
   }
 
+  isLoginPage(): boolean {
+    return this.router.url.includes('/login');
+  }
+
+  protected readonly localStorage = localStorage;
 }
