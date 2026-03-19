@@ -1,0 +1,136 @@
+.page-container {
+  padding: 20px;
+}
+
+.restaurant-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.restaurant-detail img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 480px) {
+  .restaurant-detail {
+    padding: 10px;
+  }
+
+  .dish-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  /* MOBILE  */
+  @media (max-width: 600px) {
+    .dish-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .dish-row button {
+    margin-top: 5px;
+  }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    .dish-row button {
+      width: 100%;
+    }
+  }
+
+  .review-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  /* ===== DISH CARD ===== */
+  .dish-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  /* Dish meta (rating, reviews) */
+  .dish-meta {
+    font-size: 13px;
+    color: #777;
+  }
+
+  /* Buttons */
+  .rate-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .submit-btn {
+    margin-left: 10px;
+  }
+
+  .review-btn {
+    margin-top: 20px;
+    padding: 8px 12px;
+  }
+
+  /* Rating container */
+  .rating-container {
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  /* Stars */
+  .star.small {
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .star.large {
+    font-size: 28px;
+    cursor: pointer;
+  }
+
+  .star.review {
+    font-size: 18px;
+    color: #FFC107;
+  }
+
+  /* Review form */
+  .review-form {
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+
+  /* Review card */
+  .review-card {
+    border: 1px solid #eee;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    background: #fafafa;
+  }
+
+  .review-date {
+    color: #777;
+  }
+}
+
+@media (max-width: 600px) {
+  .dish-card {
+    padding: 12px;
+  }
+
+  .review-card {
+    padding: 10px;
+  }
+}

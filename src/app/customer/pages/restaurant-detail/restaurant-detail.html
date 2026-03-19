@@ -3,24 +3,21 @@
 </div>
 
 <div *ngIf="restaurant">
-  <div style="padding: 20px;">
+  <div class="restaurant-detail">
     <h2>{{ restaurant.name }}</h2>
     <p>
       ⭐ {{ restaurant.rating | number:'1.1-1' }}
       ({{ reviews.length || 0 }} reviews)
     </p>
 
-    <h3 style="margin-top:20px;">🍜 Menu</h3>
+    <h3 class="margin-top-medium">🍜 Menu</h3>
+    <div *ngFor="let dish of restaurant?.dishes" class="dish-card">
 
-    <div *ngFor="let dish of restaurant?.dishes"
-         style="border:1px solid #eee; margin-bottom:10px; padding:15px; border-radius:8px;">
-
-      <div style="display:flex; justify-content:space-between;">
-
+      <div class="dish-row">
         <div>
           <strong>{{ dish.name }}</strong>
           <div>{{ dish.price }} €</div>
-          <div style="font-size:13px;color:#777;">
+          <div class="dish-meta">
             ★  {{ dish.rating | number:'1.1-1' }}
             <span *ngIf="dish.review_count > 0">
                   ({{ dish.review_count }} ratings)
@@ -33,15 +30,15 @@
             Add to Cart
           </button>
 
-          <button (click)="selectedDish = dish; dishRating = 0; hoverRating = 0"
-                  style="background:none;border:none;color:#666;cursor:pointer;font-size:13px;margin-left:10px;">
+          <button class="rate-btn"
+                  (click)="selectedDish = dish; dishRating = 0; hoverRating = 0">
             ⭐ Rate dish
           </button>
         </div>
       </div>
 
       <div *ngIf="selectedDish?.id === dish.id"
-           style="margin-top:10px;">
+           class="margin-top-small">
 
         <span
           *ngFor="let star of [1,2,3,4,5]"
@@ -49,12 +46,11 @@
           (mouseenter)="hoverRating = star"
           (mouseleave)="hoverRating = 0"
           [style.color]="star <= hoverRating || star <= dishRating ? '#FFC107' : '#ddd'"
-          style="cursor:pointer;font-size:22px;">
-
+          class="star small">
 ★
 </span>
 
-        <button (click)="reviewDish(dish)" style="margin-left:10px;">
+        <button (click)="reviewDish(dish)" class="submit-btn">
           Submit
         </button>
 
@@ -62,23 +58,22 @@
   </div>
   </div>
   <button (click)="showReviewForm = !showReviewForm"
-          style="margin-top:20px;padding:8px 12px;">
+          class="review-btn">
     ⭐ Leave a review
   </button>
 
-  <div *ngIf="showReviewForm" style="margin-top:15px;margin-bottom:20px;">
+  <div *ngIf="showReviewForm" class="review-form">
 
     <label>Rating:</label>
 
-    <div style="font-size:24px; cursor:pointer;">
+    <div class="rating-container">
 
 <span *ngFor="let star of [1,2,3,4,5]"
       (click)="restaurantRating = star"
       (mouseenter)="hoverRating = star"
       (mouseleave)="hoverRating = 0"
       [style.color]="star <= hoverRating || star <= restaurantRating ? '#FFC107' : '#ddd'"
-      style="cursor:pointer;font-size:28px;transition:0.2s">
-
+      class="star large">
       ★
 
     </span>
@@ -88,10 +83,10 @@
     <br>
 
     <textarea
+      class="review-textarea"
       [(ngModel)]="comment"
-      placeholder="Write your review"
-      style="width:300px;height:80px">
-  </textarea>
+      placeholder="Write your review">
+    </textarea>
 
     <br><br>
 
@@ -103,23 +98,18 @@
 
   <h3>Customer Reviews</h3>
 
-  <div *ngFor="let r of reviews"
-       style="border:1px solid #eee; padding:12px; margin-bottom:10px; border-radius:6px; background:#fafafa">
-
+  <div *ngFor="let r of reviews" class="review-card">
     <div>
  <span *ngFor="let star of [].constructor(Math.round(r.rating))"
-       style="font-size:18px;color:#FFC107;">
-⭐
+       class="star review"> ⭐
 </span>
     </div>
 
     <p>{{ r.comment }}</p>
 
-    <small style="color:#777">
+    <small class="review-date">
       {{ r.created_at | date:'short' }}
     </small>
   </div>
 
 </div>
-
-

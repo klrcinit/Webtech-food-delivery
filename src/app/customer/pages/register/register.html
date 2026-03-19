@@ -12,7 +12,7 @@
   />
 
   <div *ngIf="emailRef.invalid && (emailRef.touched || emailRef.dirty)"
-       style="color:red; font-size:12px;">
+       class="error-text">
     Please enter a valid email
   </div>
 
@@ -21,14 +21,12 @@
       <input [type]="showPassword ? 'text' : 'password'"
              [(ngModel)]="password"
              (input)="passwordStrength = getPasswordStrength(password)"
-             style="padding-right:40px;">
+             >
 
       <span (click)="showPassword = !showPassword"
-            style="position:absolute; right:10px; top:50%;
-               transform:translateY(-50%);
-               cursor:pointer;">
-    👁️
-  </span>
+            class="eye-icon">
+  👁️
+</span>
     </div>
 
       <label>Confirm password</label><br>
@@ -39,7 +37,7 @@
   ? (password === confirmPassword ? '2px solid green' : '2px solid red')
   : '1px solid #ccc'">
 
-      <div *ngIf="confirmPassword" style="margin-top:5px;">
+      <div *ngIf="confirmPassword" class="margin-top-small">
         <small [style.color]="
             password === confirmPassword ? 'green' : 'red'">
 
@@ -50,29 +48,29 @@
         </small>
     </div>
 
-    <div *ngIf="password" style="margin-top:8px;">
+    <div *ngIf="password" class="margin-top-medium">
 
-      <div style="height:6px; border-radius:4px; background:#eee;">
-        <div [style.width]="
+      <div class="password-bar password-bar-bg">
+        <div class="password-bar"
+             [style.width]="
          passwordStrength === 'Weak' ? '33%' :
          passwordStrength === 'Medium' ? '66%' : '100%'"
              [style.background]="
          passwordStrength === 'Weak' ? 'red' :
-         passwordStrength === 'Medium' ? 'orange' : 'green'"
-             style="height:6px; border-radius:4px;">
+         passwordStrength === 'Medium' ? 'orange' : 'green'">
         </div>
       </div>
 
       <small>
-    <span *ngIf="passwordStrength === 'Weak'" style="color:red;">
+    <span *ngIf="passwordStrength === 'Weak'" class="password-weak">
       Weak – add number or symbol
     </span>
 
-        <span *ngIf="passwordStrength === 'Medium'" style="color:orange;">
+        <span *ngIf="passwordStrength === 'Medium'" class="password-medium">
       Medium – good but can improve
     </span>
 
-        <span *ngIf="passwordStrength === 'Strong'" style="color:green;">
+        <span *ngIf="passwordStrength === 'Strong'" class="password-strong">
       Strong password
     </span>
       </small>
@@ -93,7 +91,9 @@
   </button>
 
   <div *ngIf="errorMessage"
-       [style.color]="errorMessage.includes('successful') ? 'green' : 'red'">
+       class="message"
+       [class.success]="errorMessage.includes('successful')"
+       [class.error]="!errorMessage.includes('successful')">
     {{ errorMessage }}
   </div>
 

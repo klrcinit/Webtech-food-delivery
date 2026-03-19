@@ -1,4 +1,5 @@
-<div style="max-width:400px; margin:50px auto">
+<div class="auth-container">
+  <div class="auth-card">
 
   <h2>Login</h2>
 
@@ -7,7 +8,6 @@
     type="email"
     placeholder="Email"
     [(ngModel)]="email"
-    style="width:100%; margin-bottom:10px"
   />
 
   <input
@@ -15,15 +15,14 @@
     type="password"
     placeholder="Password"
     [(ngModel)]="password"
-    style="width:100%; margin-bottom:10px"
   />
 
-  <button type="button" (click)="login()" style="width:100%">
+  <button type="button" (click)="login()">
     Login
   </button>
 
-  <div style="color:red; margin-top:10px" *ngIf="errorMessage">
-    ⚠ {{ errorMessage }}
+    <div class="error" *ngIf="errorMessage">
+      ⚠ {{ errorMessage }}
   </div>
 
   <p>
@@ -33,4 +32,5 @@
 
   <a routerLink="/customer/forgot-password">Forgot password?</a>
 
+</div>
 </div>

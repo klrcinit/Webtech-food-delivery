@@ -1,0 +1,51 @@
+/* CONTAINER */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* CARD */
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  margin-top: 50px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ERROR */
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 15px;
+    margin-top: 20px;
+  }
+}
