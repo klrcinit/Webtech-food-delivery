@@ -25,6 +25,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const isAuthRequest =
       req.url.includes('/login') ||
       req.url.includes('/register');
+    req.url.includes('/reset-password');
 
     if (isAuthRequest) {
       return next.handle(req);
@@ -44,12 +45,12 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error) => {
-        if (error.status === 401) {
+        if (error.status === 401 && !req.url.includes('/password')) {
           localStorage.removeItem("token");
           this.router.navigate(['/customer/login']);
         }
         if (!isAuthRequest) {
-          this.toast.show(error.error?.message || "Something went wrong");
+          this.toast.show(error.error?.error || error.error?.message || "Something went wrong");
         }
         return throwError(() => error);
       }),

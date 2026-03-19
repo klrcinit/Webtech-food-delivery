@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
 app.use(cors());
 app.use(express.json());
@@ -50,7 +51,6 @@ app.get("/api/restaurants", authenticateToken, async (req, res) => {
   if (!user_id) {
     return res.status(400).json({ error: "user_id required" });
   }
-
 
 
   try {
@@ -103,7 +103,11 @@ app.get("/api/restaurants", authenticateToken, async (req, res) => {
 
 // create new order
 app.post("/api/orders", authenticateToken, async (req, res) => {
-  const { user_id, items } = req.body;
+
+
+  const { items } = req.body;
+  const user_id  = req.user.id;
+
 
   if (!user_id || !items || items.length === 0) {
     return res.status(400).json({ error: "Invalid order data" });
@@ -181,6 +185,10 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 app.get("/api/orders/:user_id", authenticateToken, async (req, res) => {
   const { user_id } = req.params;
 
+  if (parseInt(user_id) !== req.user.id) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
   try {
     const result = await pool.query(
       `
@@ -207,10 +215,15 @@ app.get("/api/orders/:user_id", authenticateToken, async (req, res) => {
 
 app.post("/api/reviews", authenticateToken, async (req, res) => {
 
-  const { user_id, restaurant_id, dish_id, rating, comment } = req.body;
+  const user_id = req.user.id;
+  const { restaurant_id, dish_id, rating, comment } = req.body;
 
   if (!user_id || !restaurant_id || !rating) {
     return res.status(400).json({ error: "Missing data" });
+  }
+
+  if (rating < 1 || rating > 5) {
+    return res.status(400).json({ error: "Invalid rating (1-5 allowed)" });
   }
 
   try {
@@ -286,6 +299,9 @@ app.get("/api/restaurants/:id/reviews", authenticateToken, async (req, res) => {
 app.get("/api/users/:userId/reviews", authenticateToken, async (req, res) => {
 
   const { userId } = req.params;
+  if (parseInt(userId) !== req.user.id) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
 
   try {
 
@@ -308,6 +324,9 @@ app.get("/api/users/:userId/reviews", authenticateToken, async (req, res) => {
 
 app.get("/api/users/:userId/favorites", authenticateToken, async (req, res) => {
   const { userId } = req.params;
+  if (parseInt(userId) !== req.user.id) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
 
   try {
     const result = await pool.query(
@@ -410,7 +429,7 @@ app.post("/api/login", async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id },
-      "my_super_secret_key",
+      JWT_SECRET,
       { expiresIn: "2h" }
     );
 
@@ -434,20 +453,56 @@ app.post("/api/login", async (req, res) => {
 app.put("/api/users/:id/password", authenticateToken, async (req,res)=>{
 
   const { id } = req.params;
-  const { password } = req.body;
+  if (parseInt(id) !== req.user.id) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+  const { oldPassword, newPassword } = req.body;
 
-  if(!password){
-    return res.status(400).json({error:"Password required"});
+  if(!oldPassword || !newPassword) {
+    return res.status(400).json({error:"Both passwords required"});
   }
 
-  const hashedPassword = await bcrypt.hash(password,10);
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "Password too weak" });
+  }
 
-  await pool.query(
-    "UPDATE users SET password=$1 WHERE id=$2",
-    [hashedPassword,id]
-  );
+  try {
 
-  res.json({message:"Password updated"});
+    // 1. get current password
+    const result = await pool.query(
+      "SELECT password FROM users WHERE id=$1",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(200).json({
+        message: "If this email exists, password was reset"
+      });
+    }
+
+    const user = result.rows[0];
+
+    // 2. check old password
+    const match = await bcrypt.compare(oldPassword, user.password);
+
+    if (!match) {
+      return res.status(401).json({ error: "Incorrect current password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await pool.query(
+      "UPDATE users SET password=$1 WHERE id=$2",
+      [hashedPassword, id]
+    );
+
+    return res.json({ message: "Password updated successfully" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database error" });
+  }
+
 });
 
 app.put("/api/reset-password", async (req, res) => {
@@ -464,7 +519,9 @@ app.put("/api/reset-password", async (req, res) => {
     );
 
     if (existingUser.rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(200).json({
+        message: "If this email exists, password was reset"
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -490,7 +547,7 @@ function authenticateToken(req, res, next) {
     return res.sendStatus(401);
   }
 
-  jwt.verify(token, "my_super_secret_key", (err, user) => {
+  jwt.verify(token, JWT_SECRET, (err, user) => {
 
     if (err) {
       return res.sendStatus(403);
@@ -506,6 +563,9 @@ app.put("/api/users/:id", authenticateToken, async (req, res) => {
 
   const { id } = req.params;
   const { email, location_x, location_y } = req.body;
+
+  if (parseInt(id) !== req.user.id)
+    return res.status(403).json({ error: "Forbidden" });
 
   if (!email) {
     return res.status(400).json({ error: "Email required" });
