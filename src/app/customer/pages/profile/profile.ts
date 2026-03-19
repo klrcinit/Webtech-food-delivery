@@ -22,12 +22,14 @@ export class Profile {
 
   ngOnInit() {
     this.user.email = localStorage.getItem("email") || "";
+    this.user.address = localStorage.getItem("address") || "";
     this.user.location_x = Number(localStorage.getItem("location_x")) || 0;
     this.user.location_y = Number(localStorage.getItem("location_y")) || 0;
   }
 
   user: any = {
     email: '',
+    address: '',
     location_x: 0,
     location_y: 0
   };
@@ -122,6 +124,7 @@ export class Profile {
 
           // shrani v localStorage
           localStorage.setItem("email", this.user.email);
+          localStorage.setItem("address", this.user.address);
           localStorage.setItem("location_x", this.user.location_x.toString());
           localStorage.setItem("location_y", this.user.location_y.toString());
         },
