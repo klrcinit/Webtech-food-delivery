@@ -47,7 +47,7 @@ export class App implements OnInit {
   }
 
   isLoggedIn(): boolean {
-
+    this.userEmail = localStorage.getItem("email") || "";
     return localStorage.getItem("token") !== null;
 
   }

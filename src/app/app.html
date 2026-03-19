@@ -9,13 +9,17 @@
     Orders
   </a>
 
+  <a routerLink="/customer/profile">Profile</a>
+
   <span style="margin-left:auto">
     Logged in as {{ userEmail }}
   </span>
 
+
+
 </nav>
 
-<button *ngIf="isLoggedIn()" (click)="logout()">Logout</button>
+<button (click)="logout()" style="margin-left:10px;">Logout</button>
 
 <router-outlet></router-outlet>
 
