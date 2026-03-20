@@ -92,7 +92,7 @@ app.get("/api/restaurants", authenticateToken, async (req, res) => {
 
     });
 
-    res.json(enrichedRestaurants);
+    res.json({ restaurants: enrichedRestaurants});
 
   } catch (err) {
     console.error(err);

@@ -103,7 +103,6 @@ export class Cart implements OnInit {
 
     if (this.voucherCode === "SAVE10") {
       this.discount = this.total * 0.10;
-      this.total = this.total - this.discount;
       alert("10% discount applied!");
     } else {
       alert("Invalid voucher");

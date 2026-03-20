@@ -24,7 +24,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     const isAuthRequest =
       req.url.includes('/login') ||
-      req.url.includes('/register');
+      req.url.includes('/register') ||
     req.url.includes('/reset-password');
 
     if (isAuthRequest) {
