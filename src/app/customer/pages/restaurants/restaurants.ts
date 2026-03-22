@@ -22,6 +22,8 @@ export class Restaurants implements OnInit {
   maxDelivery: number = 0;
   maxDistance: number = 0;
   sortOption: string = "";
+  activeTab: string = 'favorites';
+  hasOrders: boolean = false;
 
   constructor(
     private restaurantService: RestaurantService,
@@ -59,6 +61,8 @@ export class Restaurants implements OnInit {
         this.restaurantService.getOrders().subscribe({
           next: (orders: any[]) => {
 
+            this.hasOrders = orders.length > 0;
+
             const orderedNames = [...new Set(
               orders.map(o => o.restaurant_name)
             )];
@@ -84,11 +88,7 @@ export class Restaurants implements OnInit {
               .slice(0, 3);
 
             // If user has no orders → fallback to top rated
-            if (this.orderedRestaurants.length === 0) {
-              this.orderedRestaurants = [...this.restaurants]
-                .sort((a, b) => b.rating - a.rating)
-                .slice(0, 3);
-            }
+
 
             this.cdr.detectChanges();
           }

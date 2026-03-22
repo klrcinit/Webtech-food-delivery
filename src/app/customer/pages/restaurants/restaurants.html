@@ -9,7 +9,10 @@
     </div>
 
     <!-- ORDER AGAIN -->
-    <div class="card"><h2>Order Again</h2></div>
+    <button *ngIf="hasOrders"
+            [class.active]="activeTab === 'ordered'"
+            (click)="activeTab = 'ordered'">
+            Order Again</button>
     <div class="recommendations section-animate">
       <div class="recommend-card skeleton" *ngFor="let i of [1,2,3]"></div>
     </div>
@@ -27,124 +30,143 @@
     </div>
   </div>
   <div *ngIf="!loading" class="fade-in">
-  <div class="card">
-<h2>Your Favorites</h2></div>
-<div class="recommendations section-animate">
-  <div *ngFor="let r of favoriteRestaurants" class="recommend-card">
-    <h3>{{ r.name }}</h3>
-    <p>
-      ⭐ {{ r.user_rating | number:'1.1-1' }}
-      ⏱ {{ r.delivery_minutes }} min
-      📍 {{ r.distance_km }} km
+    <div class="section">
+      <h2 class="section-title">Recommended for you</h2>
 
-    </p>
-    <a [routerLink]="['/customer/restaurants', r.id]"
-       class="menu-btn">
-      View Menu
-    </a>
-  </div>
-</div>
+      <!-- TABS -->
+      <div class="tabs">
+        <button
+          [class.active]="activeTab === 'favorites'"
+          (click)="activeTab = 'favorites'">
+          Your Favorites
+        </button>
 
-<!-- Show message if empty -->
-<div *ngIf="favoriteRestaurants.length === 0">
-  <p>⭐ You haven't rated any restaurants yet.</p>
-  <br>
-  Try ordering and reviewing a restaurant to see favorites here.
-</div>
+        <button
+          [class.active]="activeTab === 'ordered'"
+          (click)="activeTab = 'ordered'">
+          Order Again
+        </button>
 
-<div class="card">
-  <h2>Order Again</h2></div>
-<div class="recommendations section-animate">
-  <div *ngFor="let r of orderedRestaurants" class="recommend-card">
-    <h3>{{ r.name }}</h3>
-    <p>
-      ⭐ {{ r.rating | number:'1.1-1' }}
-      ⏱ {{ r.delivery_minutes }} min
-      📍 {{ r.distance_km }} km
-    </p>
-    <a [routerLink]="['/customer/restaurants', r.id]"
-       class="menu-btn">
-      View Menu
-    </a>
-  </div>
-</div>
+        <button
+          [class.active]="activeTab === 'popular'"
+          (click)="activeTab = 'popular'">
+          Popular
+        </button>
+      </div>
 
-  <div class="card">
-    <h2>Popular Near You</h2></div>
-<div class="recommendations section-animate">
-  <div *ngFor="let r of popularRestaurants" class="recommend-card">
-    <h3>{{ r.name }}</h3>
-    <p>
-      ⭐ {{ r.rating | number:'1.1-1' }}
-      ⏱ {{ r.delivery_minutes }} min
-      📍 {{ r.distance_km }} km
-    </p>
-    <a [routerLink]="['/customer/restaurants', r.id]"
-       class="menu-btn">
-      View Menu
-    </a>
-  </div>
-</div>
+      <!-- CONTENT -->
+      <div class="horizontal-scroll">
 
-    <div class="card">
-<h2>Available Restaurants</h2></div>
-<div class="filter-bar">
+        <!-- FAVORITES -->
+        <ng-container *ngIf="activeTab === 'favorites'">
+          <div *ngFor="let r of favoriteRestaurants" class="restaurant-card premium">
+            <h3>{{ r.name }}</h3>
+            <div class="meta">
+              ⭐ {{ r.user_rating | number:'1.1-1' }}
+              <div class="user-badge">
+                ✔ You rated this
+              </div>
+              ⏱ {{ r.delivery_minutes }} min
+              📍 {{ r.distance_km }} km
+            </div>
+            <a [routerLink]="['/customer/restaurants', r.id]" class="menu-btn">
+              View Menu
+            </a>
+          </div>
 
-  <input
-    type="text"
-    placeholder="Search restaurant or cuisine"
-    [(ngModel)]="selectedCuisine"
-    (ngModelChange)="filterRestaurants()"
-  />
+          <div *ngIf="favoriteRestaurants.length === 0" class="empty-text">
+            ⭐ You haven't rated anything yet.
+          </div>
+        </ng-container>
+        <!-- ORDER AGAIN -->
+        <ng-container *ngIf="activeTab === 'ordered'">
 
-  <label>Sort by:</label>
+          <div *ngIf="orderedRestaurants.length > 0">
+            <div *ngFor="let r of orderedRestaurants" class="restaurant-card premium">
+              <h3>{{ r.name }}</h3>
+              <div class="meta">
+                ⭐ {{ r.rating | number:'1.1-1' }}
+                ⏱ {{ r.delivery_minutes }} min
+                📍 {{ r.distance_km }} km
+              </div>
+              <a [routerLink]="['/customer/restaurants', r.id]" class="menu-btn">
+                View Menu
+              </a>
+            </div>
+          </div>
 
-  <select [(ngModel)]="sortOption" (change)="applySorting()">
-    <option value="">None</option>
-    <option value="rating_desc">Top rated ⭐</option>
-    <option value="rating_asc">Lowest rated</option>
-    <option value="delivery_asc">Fastest delivery ⏱</option>
-    <option value="delivery_desc">Slowest delivery</option>
-    <option value="distance_asc">Closest distance 📍</option>
-    <option value="distance_desc">Farthest distance</option>
-  </select>
+          <div *ngIf="orderedRestaurants.length === 0" class="empty-text">
+            🧾 No previous orders yet.
+          </div>
 
-  <button (click)="resetFilters()">
-    Reset
-  </button>
+        </ng-container>
 
-</div>
+        <!-- POPULAR -->
+        <ng-container *ngIf="activeTab === 'popular'">
+          <div *ngFor="let r of popularRestaurants" class="restaurant-card premium">
+            <h3>{{ r.name }}</h3>
+            <div class="meta">
+              ⭐ {{ r.rating | number:'1.1-1' }}
+              ⏱ {{ r.delivery_minutes }} min
+              📍 {{ r.distance_km }} km
+            </div>
+            <a [routerLink]="['/customer/restaurants', r.id]" class="menu-btn">
+              View Menu
+            </a>
+          </div>
+        </ng-container>
+      </div>
+    </div>
 
-<!-- Restaurant list -->
-<div *ngIf="!loading && filteredRestaurants.length > 0" class="section-animate">
+    <div class="section">
+      <h2 class="section-title">🍽 Available Restaurants</h2>
 
-  <div class="restaurant-list">
-    <div *ngFor="let r of filteredRestaurants; trackBy: trackById"
-         class="restaurant-card">
+      <div class="filter-bar premium-filter">
 
-      <h3>{{ r.name }}</h3>
-      <p>
-        ⭐ {{ r.rating | number:'1.1-1' }}
-        ⏱ {{ r.delivery_minutes }} min
-        📍 {{ r.distance_km }} km
-      </p>
+        <input
+          type="text"
+          placeholder="Search restaurant or cuisine..."
+          [(ngModel)]="selectedCuisine"
+          (ngModelChange)="filterRestaurants()"
+        />
 
-      <p>
-        🍽 {{ r.cuisine }}
-      </p>
+        <select [(ngModel)]="sortOption" (change)="applySorting()">
+          <option value="">Sort</option>
+          <option value="rating_desc">Top rated ⭐</option>
+          <option value="delivery_asc">Fastest ⏱</option>
+          <option value="distance_asc">Closest 📍</option>
+        </select>
 
-      <a [routerLink]="['/customer/restaurants', r.id]"
-         class="menu-btn">
-        View Menu
-      </a>
+        <button (click)="resetFilters()">Reset</button>
 
+      </div>
+
+      <div class="restaurant-list premium-grid">
+        <div *ngFor="let r of filteredRestaurants; trackBy: trackById"
+             class="restaurant-card premium">
+
+          <h3>{{ r.name }}</h3>
+
+          <div class="meta">
+            ⭐ {{ r.rating | number:'1.1-1' }}
+            ⏱ {{ r.delivery_minutes }} min
+            📍 {{ r.distance_km }} km
+          </div>
+
+          <div class="cuisine">
+            🍽 {{ r.cuisine }}
+          </div>
+
+          <a [routerLink]="['/customer/restaurants', r.id]" class="menu-btn">
+            View Menu
+          </a>
+
+        </div>
+      </div>
+
+      <div *ngIf="filteredRestaurants.length === 0" class="empty-text">
+        🔍 No results found.
+      </div>
     </div>
   </div>
-
-</div>
-
-<div *ngIf="!loading && filteredRestaurants.length === 0">
-  🔍 No results match your search.
-</div>
-    </div>
 </div>
