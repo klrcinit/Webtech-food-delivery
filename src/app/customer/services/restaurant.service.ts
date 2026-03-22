@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Order } from '../../models/order.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,8 +32,9 @@ export class RestaurantService {
     return this.http.get<any>(`http://localhost:3000/api/restaurants/${id}`)
   }
 
-  getOrders(userId: number): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:3000/api/orders/${userId}`) }
+  getOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>("http://localhost:3000/api/orders");
+  }
 
   getUserReviews(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`http://localhost:3000/api/users/${userId}/reviews`)

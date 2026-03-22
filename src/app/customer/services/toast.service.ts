@@ -6,11 +6,11 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ToastService {
 
-  private messageSubject = new BehaviorSubject<string | null>(null);
+  private messageSubject = new BehaviorSubject<{text: string, type: string} | null>(null);
   message$ = this.messageSubject.asObservable();
 
-  show(message: string) {
-    this.messageSubject.next(message);
+  show(message: string, type: string = 'default') {
+    this.messageSubject.next({ text: message, type});
 
     setTimeout(() => {
       this.messageSubject.next(null);

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class CartService {
 
   cartCount$ = new BehaviorSubject<number>(this.getCartItemCount());
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private toastService: ToastService) {
   }
 
   // 1. Dodaj v košarico
@@ -28,9 +29,9 @@ export class CartService {
       });
     }
     this.updateCart();
-    console.log('Dodano v košarico:', product.name);
-    alert(product.name + ' je dodana v košarico! 🛒');
-  }
+    console.log('Added to cart:', product.name);
+    this.toastService.show(`${product.name} added to cart 🛒`, 'default');
+    }
 
   // 2. Dobi vse izdelke (za prikaz v košarici)
   getItems() {
