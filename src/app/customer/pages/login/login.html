@@ -1,36 +1,63 @@
 <div class="auth-container">
   <div class="auth-card">
 
-  <h2>Login</h2>
+    <h2>Login</h2>
 
-  <input
-    name="email"
-    type="email"
-    placeholder="Email"
-    [(ngModel)]="email"
-  />
+    <input
+      name="email"
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="email"
+      [disabled]="countdown > 0"
+    />
 
-  <input
-    name="password"
-    type="password"
-    placeholder="Password"
-    [(ngModel)]="password"
-  />
+    <input
+      name="password"
+      type="password"
+      placeholder="Password"
+      [(ngModel)]="password"
+      [class.shake]="isErrorShake"
+      [disabled]="countdown > 0"
+    />
 
-  <button type="button" (click)="login()">
-    Login
-  </button>
+    <button type="button" (click)="login()"
+            [disabled]="countdown > 0 || loading">
+      <span *ngIf="!loading">Login</span>
 
-    <div class="error" *ngIf="errorMessage">
+      <span *ngIf="loading" class="btn-loading">
+    <span class="spinner"></span>
+    Loading...
+  </span>
+
+    </button>
+
+    <div *ngIf="clickBlockedMessage" class="info-text">
+      ⏳ {{ clickBlockedMessage }}
+    </div>
+
+    <!-- LOCKED (NO triangle) -->
+    <div *ngIf="countdown > 0" class="locked-wrapper">
+      <div class="locked-text pulse">
+        🔒 Try again in {{ countdown }}s
+      </div>
+    </div>
+
+    <!-- NORMAL ERROR (WITH triangle) -->
+    <div class="error" *ngIf="!countdown && errorMessage">
       ⚠ {{ errorMessage }}
+    </div>
+
+    <p>
+      Don't have an account?
+      <a routerLink="/customer/register">Register</a>
+    </p>
+
+    <a routerLink="/customer/forgot-password">Forgot password?</a>
+
+    <div *ngIf="success" class="success-overlay">
+      <div class="checkmark"></div>
+    </div>
+
   </div>
 
-  <p>
-    Don't have an account?
-    <a routerLink="/customer/register">Register</a>
-  </p>
-
-  <a routerLink="/customer/forgot-password">Forgot password?</a>
-
-</div>
 </div>
