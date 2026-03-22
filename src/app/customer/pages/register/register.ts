@@ -32,6 +32,27 @@ export class Register {
   register() {
 
     this.errorMessage = "";
+
+    if (!this.address || this.address.trim() === "") {
+      this.errorMessage = "City is required";
+      return;
+    }
+
+    if (!this.email.includes("@") || !this.email.includes(".")) {
+      this.errorMessage = "Invalid email";
+      return;
+    }
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = "Passwords do not match";
+      return;
+    }
+
+    if (this.password.length < 6) {
+      this.errorMessage = "Password must be at least 6 characters";
+      return;
+    }
+
     this.loading = true;
 
     const location_x = Math.floor(Math.random() * 10);
@@ -46,6 +67,9 @@ export class Register {
     ).subscribe({
 
       next: () => {
+        localStorage.setItem("email", this.email);
+        localStorage.setItem("address", this.address);
+
         this.errorMessage = "Registration successful! Please log in.";
         this.loading = false;
         this.email = "";

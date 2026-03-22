@@ -9,10 +9,12 @@
     [(ngModel)]="email"
     #emailRef="ngModel"
     required
+    email
+    [class.input-error]="emailRef.touched && emailRef.invalid"
   />
 
-  <div *ngIf="emailRef.invalid && (emailRef.touched || emailRef.dirty)"
-       class="error-text">
+    <div *ngIf="emailRef.touched && emailRef.invalid"
+         class="error-text">
     Please enter a valid email
   </div>
 
@@ -48,7 +50,7 @@
         </small>
     </div>
 
-    <div *ngIf="password" class="margin-top-medium">
+    <div *ngIf="password" class="margin-top-medium" style="margin-bottom: 15px;">
 
       <div class="password-bar password-bar-bg">
         <div class="password-bar"
@@ -78,14 +80,26 @@
     </div>
 
   <label>City</label>
-  <input [(ngModel)]="address" placeholder="Enter your city">
+  <input [(ngModel)]="address" placeholder="Enter your city"
+    required
+    #addressRef="ngModel"
+    />
+
+    <div *ngIf="addressRef.invalid && (addressRef.touched || addressRef.dirty)"
+         class="error-text">
+      Please enter your city
+    </div>
 
   <button (click)="register()"
           [disabled]="
+          !email ||
     password.length < 6 ||
     passwordStrength === 'Weak'||
-  password !== confirmPassword
-  || emailRef.invalid">
+  password !== confirmPassword ||
+  emailRef.invalid ||
+          !address ||
+    address.trim() === ''
+    ">
     <span *ngIf="!loading">Register</span>
     <span *ngIf="loading">Loading...</span>
   </button>

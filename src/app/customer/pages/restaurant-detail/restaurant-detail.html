@@ -2,7 +2,7 @@
   Loading menu...
 </div>
 
-<div *ngIf="restaurant">
+<div *ngIf="restaurant" class="container">
   <div class="restaurant-detail">
     <h2>{{ restaurant.name }}</h2>
     <p>
@@ -11,7 +11,7 @@
     </p>
 
     <h3 class="margin-top-medium">🍜 Menu</h3>
-    <div *ngFor="let dish of restaurant?.dishes" class="dish-card">
+    <div *ngFor="let dish of restaurant?.dishes || []" class="dish-card">
 
       <div class="dish-row">
         <div>
@@ -41,7 +41,7 @@
            class="margin-top-small">
 
         <span
-          *ngFor="let star of [1,2,3,4,5]"
+          *ngFor="let star of stars"
           (click)="dishRating = star"
           (mouseenter)="hoverRating = star"
           (mouseleave)="hoverRating = 0"
@@ -68,7 +68,7 @@
 
     <div class="rating-container">
 
-<span *ngFor="let star of [1,2,3,4,5]"
+<span *ngFor="let star of stars"
       (click)="restaurantRating = star"
       (mouseenter)="hoverRating = star"
       (mouseleave)="hoverRating = 0"

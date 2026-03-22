@@ -24,23 +24,8 @@
     gap: 10px;
   }
 
-  /* MOBILE  */
-  @media (max-width: 600px) {
-    .dish-row {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
-
   .dish-row button {
     margin-top: 5px;
-  }
-
-  /* MOBILE */
-  @media (max-width: 600px) {
-    .dish-row button {
-      width: 100%;
-    }
   }
 
   .review-textarea {
@@ -132,5 +117,67 @@
 
   .review-card {
     padding: 10px;
+  }
+}
+
+.dish {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* CENTER PAGE */
+.container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* RESTAURANT HEADER */
+.restaurant-detail {
+  margin-bottom: 20px;
+}
+
+/* DISH CARD */
+.dish-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* DISH ROW */
+.dish-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* BUTTONS */
+button {
+  margin-right: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+/* REVIEW CARDS */
+.review-card {
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+@media (max-width: 600px) {
+  .dish-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }

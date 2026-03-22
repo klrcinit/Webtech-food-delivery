@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-// Importamo servis, ki smo ga pravkar uredili
 import { RestaurantService } from '../../services/restaurant.service';
 
 @Component({
@@ -43,7 +42,11 @@ export class Restaurants implements OnInit {
         this.restaurants = [...restaurants];
         this.originalRestaurants = [...restaurants];
         this.filteredRestaurants = [...restaurants];
-        this.loading = false;
+        setTimeout(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }, 1200);
+
 
         this.loadUserFavorites();
 
@@ -53,7 +56,7 @@ export class Restaurants implements OnInit {
           .slice(0, 3);
 
             // GET USER ORDERS
-        this.restaurantService.getOrders(userId).subscribe({
+        this.restaurantService.getOrders().subscribe({
           next: (orders: any[]) => {
 
             const orderedNames = [...new Set(

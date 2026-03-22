@@ -128,3 +128,23 @@ button:disabled {
 .mt-5 { margin-top: 5px; }
 .mt-8 { margin-top: 8px; }
 .mt-15 { margin-top: 15px; }
+
+.section-divider {
+  margin: 25px 0;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.password-section {
+  margin-bottom: 20px;
+}
+
+.section-subtitle {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 15px;
+}

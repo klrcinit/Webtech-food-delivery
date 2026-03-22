@@ -25,6 +25,7 @@ export class Profile {
     this.user.address = localStorage.getItem("address") || "";
     this.user.location_x = Number(localStorage.getItem("location_x")) || 0;
     this.user.location_y = Number(localStorage.getItem("location_y")) || 0;
+    console.log("ADDRESS FROM STORAGE:", localStorage.getItem("address"));
   }
 
   user: any = {

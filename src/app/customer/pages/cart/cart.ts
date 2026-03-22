@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { CartService } from '../../services/cart.service';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-cart',
@@ -15,9 +16,10 @@ export class Cart implements OnInit {
   voucherCode: string = "";
   discount: number = 0;
   cartItemCount: number = 0;
+  successMessage: string = "";
 
   // 4. Povežemo se s servisom
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, private toastService: ToastService) {}
 
   // 5. Ko se stran odpre, naložimo pice
   ngOnInit(): void {
@@ -84,28 +86,32 @@ export class Cart implements OnInit {
     this.cartService.checkout(orderData).subscribe({
       next: (data) => {
         console.log("Order response:", data);
-        alert("Order successfully placed!");
+        this.toastService.show("Order successfully placed!");
         this.clearCart();
-        window.location.href = "/customer/orders";
+
+        setTimeout(() => {
+          window.location.href = "/customer/orders";
+        }, 1500);
       },
+
       error: (error) => {
         console.error("Checkout error:", error);
-        alert("Error placing order.");
+        this.successMessage = "Error placing order.";
       }
     });
       }
   applyVoucher() {
 
     if (this.discount > 0) {
-      alert("Voucher already applied");
+      this.toastService.show("Voucher already applied");
       return;
     }
 
     if (this.voucherCode === "SAVE10") {
       this.discount = this.total * 0.10;
-      alert("10% discount applied!");
+      this.toastService.show("10% discount applied!");
     } else {
-      alert("Invalid voucher");
+      this.toastService.show("Invalid voucher");
     }
   }
 

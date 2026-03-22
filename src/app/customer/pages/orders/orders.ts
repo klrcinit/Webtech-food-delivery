@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RestaurantService } from '../../services/restaurant.service';
 import {CartService} from '../../services/cart.service';
+import { Order } from '../../../models/order.model';
 
 @Component({
   selector: 'app-orders',
@@ -11,14 +12,13 @@ import {CartService} from '../../services/cart.service';
 
 export class Orders implements OnInit {
 
-  orders: any[] = [];
+  orders: Order[] = [];
   loading = true;
   cartItemCount: number = 0;
 
   constructor(
-    private restaurantService: RestaurantService, private cdr: ChangeDetectorRef, private cartService: CartService)
-
-{}
+    private restaurantService: RestaurantService, private cartService: CartService) {
+  }
 
 
   ngOnInit(): void {
@@ -28,18 +28,13 @@ export class Orders implements OnInit {
       (sum, item) => sum + item.quantity,
       0
     );
-    const userId = Number(localStorage.getItem("user_id"));
-    this.restaurantService.getOrders(userId).subscribe((data: any[]) => {
+    this.restaurantService.getOrders().subscribe((data) => {
       this.orders = data;
-
       this.loading = false;
-      this.cdr.detectChanges();
       console.log("Orders loaded:", data);
     });
-    setInterval(() => {
-      this.cdr.detectChanges();
-    }, 30000);
   }
+
   getOrderStatus(order: any): string {
 
     const created = new Date(order.created_at).getTime();
@@ -59,6 +54,7 @@ export class Orders implements OnInit {
     return "Delivered";
 
   }
+
   getRemainingMinutes(order: any): number {
 
     const created = new Date(order.created_at).getTime();
@@ -72,11 +68,20 @@ export class Orders implements OnInit {
     return Math.max(0, Math.round(remaining));
 
   }
+
   isActive(order: any): boolean {
     return this.getRemainingMinutes(order) > 0;
   }
 
   isPrevious(order: any): boolean {
     return this.getRemainingMinutes(order) === 0;
+  }
+
+  hasActiveOrders(): boolean {
+    return this.orders.some(o => this.isActive(o));
+  }
+
+  hasPreviousOrders(): boolean {
+    return this.orders.some(o => this.isPrevious(o));
   }
 }

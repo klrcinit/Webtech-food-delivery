@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core'
 import { ActivatedRoute } from '@angular/router';
 import { RestaurantService } from '../../services/restaurant.service';
 import { CartService } from '../../services/cart.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-restaurant-detail',
@@ -22,12 +23,14 @@ export class RestaurantDetail implements OnInit {
   showReviewForm: boolean = false;
   selectedDish: any = null;
   userId: number = 0;
+  stars = [1, 2, 3, 4, 5];
 
   constructor(
     private route: ActivatedRoute,
     private restaurantService: RestaurantService,
     private cartService: CartService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
   }
   ngOnInit(): void {
@@ -85,7 +88,9 @@ export class RestaurantDetail implements OnInit {
     };
     this.restaurantService.addReview(review).subscribe(() => {
       dish.rating = this.dishRating;
-      alert("Dish review submitted!");
+      setTimeout(() => {
+        this.toastService.show("Dish review submitted!", "success");
+      });
 
       // reload restaurant to refresh dish ratings
       this.restaurantService.getRestaurant(this.restaurant.id).subscribe((data:any)=>{
@@ -111,7 +116,9 @@ export class RestaurantDetail implements OnInit {
   submitReview() {
 
     if (this.restaurantRating === 0) {
-      alert("Please select a rating");
+      setTimeout(() => {
+        this.toastService.show("Please select a rating", "error");
+      });
       return;
     }
     if (!this.restaurant) return;
@@ -125,7 +132,9 @@ export class RestaurantDetail implements OnInit {
 
     this.restaurantService.addReview(review).subscribe(() => {
 
-      alert("Review submitted!");
+      setTimeout(() => {
+        this.toastService.show("Review submitted!", "success");
+      });
       this.restaurantService
         .getReviews(this.restaurant.id)
         .subscribe((data:any[])=>{

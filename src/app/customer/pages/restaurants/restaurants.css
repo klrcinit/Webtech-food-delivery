@@ -5,9 +5,11 @@
 }
 
 .restaurant-card {
-  border: 1px solid #ccc;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   padding: 20px;
-  border-radius: 8px;
   background: #fff;
 }
 
@@ -20,9 +22,11 @@
 
 .recommend-card {
   min-width: 220px;
-  border: 1px solid #ddd;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   padding: 12px;
-  border-radius: 8px;
   background: white;
   flex-shrink: 0;
 }
@@ -58,15 +62,19 @@
 }
 
 /* ===== HOVER for main cards ===== */
-.restaurant-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+.restaurant-card:hover,
+  .recommend-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.1),
+  0 0 0 1px rgba(0,0,0,0.02);
 }
 
 /* ===== HEADINGS spacing ===== */
 h2 {
-  margin-top: 25px;
-}
+    margin-top: 25px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
 
 input, select, button {
   padding: 6px;
@@ -90,3 +98,58 @@ input, select, button {
     width: 100%;
   }
 }
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150px;
+  height: 100%;
+  width: 150px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.7),
+    transparent
+  );
+  animation: shimmer 1.3s infinite;
+}
+
+.restaurant-card.skeleton {
+  height: 120px;
+  border-radius: 12px;
+}
+
+.recommend-card.skeleton {
+  height: 100px;
+  border-radius: 10px;
+  min-width: 220px;
+}
+
+@keyframes shimmer {
+  0% { left: -150px; }
+  100% { left: 100%; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+

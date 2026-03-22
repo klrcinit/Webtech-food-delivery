@@ -36,8 +36,8 @@ export class App implements OnInit {
     this.cartService.cartCount$.subscribe(count => {
       this.cartItemCount = count;
     });
-
   }
+
 
   logout() {
 

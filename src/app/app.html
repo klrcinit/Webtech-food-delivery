@@ -25,7 +25,9 @@
   </button>
 
 </nav>
+<div class="page-wrapper">
 <router-outlet></router-outlet>
+</div>
 
 <!-- LOADING -->
 <div *ngIf="loading$ | async" class="global-loader">
@@ -33,6 +35,8 @@
 </div>
 
 <!-- TOAST -->
-<div *ngIf="toast$ | async as msg" class="toast">
-  {{ msg }}
+<div *ngIf="toast$ | async as msg"
+     class="toast"
+  [ngClass]="msg.type">
+  {{ msg.text }}
 </div>

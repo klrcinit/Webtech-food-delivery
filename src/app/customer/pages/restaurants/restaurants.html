@@ -1,7 +1,35 @@
 <div class="container">
+  <!--SKELETON-->
+  <div *ngIf="loading">
+
+    <!-- FAVORITES -->
+    <div class="card"><h2>Your Favorites</h2></div>
+    <div class="recommendations section-animate">
+      <div class="recommend-card skeleton" *ngFor="let i of [1,2,3]"></div>
+    </div>
+
+    <!-- ORDER AGAIN -->
+    <div class="card"><h2>Order Again</h2></div>
+    <div class="recommendations section-animate">
+      <div class="recommend-card skeleton" *ngFor="let i of [1,2,3]"></div>
+    </div>
+
+    <!-- POPULAR -->
+    <div class="card"><h2>Popular Near You</h2></div>
+    <div class="recommendations section-animate">
+      <div class="recommend-card skeleton" *ngFor="let i of [1,2,3]"></div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="card"><h2>Available Restaurants</h2></div>
+    <div class="restaurant-list">
+      <div class="restaurant-card skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+  </div>
+  <div *ngIf="!loading" class="fade-in">
   <div class="card">
-<h2>⭐ Your Favorites</h2></div>
-<div class="recommendations">
+<h2>Your Favorites</h2></div>
+<div class="recommendations section-animate">
   <div *ngFor="let r of favoriteRestaurants" class="recommend-card">
     <h3>{{ r.name }}</h3>
     <p>
@@ -25,8 +53,8 @@
 </div>
 
 <div class="card">
-  <h2>🔁 Order Again</h2></div>
-<div class="recommendations">
+  <h2>Order Again</h2></div>
+<div class="recommendations section-animate">
   <div *ngFor="let r of orderedRestaurants" class="recommend-card">
     <h3>{{ r.name }}</h3>
     <p>
@@ -42,8 +70,8 @@
 </div>
 
   <div class="card">
-    <h2>🔥 Popular Near You</h2></div>
-<div class="recommendations">
+    <h2>Popular Near You</h2></div>
+<div class="recommendations section-animate">
   <div *ngFor="let r of popularRestaurants" class="recommend-card">
     <h3>{{ r.name }}</h3>
     <p>
@@ -87,14 +115,8 @@
 
 </div>
 
-<!-- Loading message -->
-<div *ngIf="loading">
-  <p>Loading restaurants...</p>
-</div>
-
-
 <!-- Restaurant list -->
-<div *ngIf="!loading && filteredRestaurants.length > 0">
+<div *ngIf="!loading && filteredRestaurants.length > 0" class="section-animate">
 
   <div class="restaurant-list">
     <div *ngFor="let r of filteredRestaurants; trackBy: trackById"
@@ -125,3 +147,4 @@
   🔍 No results match your search.
 </div>
     </div>
+</div>

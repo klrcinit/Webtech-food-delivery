@@ -12,12 +12,16 @@
 </div>
 
 <!-- ACTIVE ORDERS -->
-<h3>Active Orders</h3>
-
-<div *ngFor="let order of orders">
-  <div *ngIf="getRemainingMinutes(order) > 0"
-       class="order-card">
+    <h3 *ngIf="hasActiveOrders()">Active Orders</h3>
+    <div *ngFor="let order of orders">
+      <div *ngIf="isActive(order)" class="order-card">
     <h3>{{ order.restaurant_name }}</h3>
+        <p><strong>Total: €{{ order.total_price }}</strong></p>
+    <ul>
+      <li *ngFor="let item of order.items">
+        {{ item.name }} x{{ item.quantity }} – €{{ item.price }}
+      </li>
+    </ul>
 
     <p>
       Status:
@@ -36,12 +40,20 @@
 
 
 <!-- PREVIOUS ORDERS -->
-<h3>Previous Orders</h3>
+    <h3 *ngIf="hasPreviousOrders()">Previous Orders</h3>
 
-<div *ngFor="let order of orders">
-  <div *ngIf="getOrderStatus(order) === 'Delivered'"
-       class="order-card">
+    <div *ngFor="let order of orders">
+      <div *ngIf="isPrevious(order)" class="order-card">
+
     <h3>{{ order.restaurant_name }}</h3>
+
+        <ul>
+          <li *ngFor="let item of order.items">
+            {{ item.name }} x{{ item.quantity }} – €{{ item.price }}
+          </li>
+        </ul>
+
+        <p><strong>Total: €{{ order.total_price }}</strong></p>
 
     <p>Status: ✅ Delivered</p>
 
