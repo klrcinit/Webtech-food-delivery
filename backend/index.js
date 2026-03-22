@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
 const bcrypt = require("bcrypt");
+const rateLimit = require("express-rate-limit");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const jwt = require("jsonwebtoken");
@@ -9,6 +10,23 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
 app.use(cors());
 app.use(express.json());
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minuta
+  max: 5,
+  message: { error: "Too many requests, try again later"}
+});
+
+const loginLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minut
+  max: 5,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many login attempts",
+      lock_until: new Date(Date.now() + 5 * 60 * 1000)
+    });
+  }
+});
 
 // Povezava na bazo (brez gesla, ker imamo 'trust')
 const pool = new Pool({
@@ -114,15 +132,41 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
   }
 
   try {
-    // 1. Get restaurant_id from first dish
-    const firstDish = await pool.query(
-      "SELECT restaurant_id FROM dishes WHERE id = $1",
-      [items[0].dish_id]
+    const createdOrders = [];
+
+    // 1. Get all dish -> restaurant mappings
+    const dishIds = items.map(item => item.dish_id);
+
+    const dishesResult = await pool.query(
+      `SELECT id, restaurant_id
+       FROM dishes
+       WHERE id = ANY($1)`,
+      [dishIds]
     );
 
-    const restaurant_id = firstDish.rows[0].restaurant_id;
+    const dishToRestaurant = {};
+    dishesResult.rows.forEach(row => {
+      dishToRestaurant[row.id] = row.restaurant_id;
+    });
 
-// 2. Get user location
+    // 2. Group cart items by restaurant_id
+    const groupedItems = {};
+
+    for (const item of items) {
+      const restaurant_id = dishToRestaurant[item.dish_id];
+
+      if (!restaurant_id) {
+        return res.status(400).json({ error: `Dish ${item.dish_id} not found` });
+      }
+
+      if (!groupedItems[restaurant_id]) {
+        groupedItems[restaurant_id] = [];
+      }
+
+      groupedItems[restaurant_id].push(item);
+    }
+
+    // 3. Get user location once
     const userResult = await pool.query(
       "SELECT location_x, location_y FROM users WHERE id = $1",
       [user_id]
@@ -130,82 +174,115 @@ app.post("/api/orders", authenticateToken, async (req, res) => {
 
     const user = userResult.rows[0];
 
-// 3. Get restaurant location
-    const restaurantResult = await pool.query(
-      "SELECT location_x, location_y FROM restaurants WHERE id = $1",
-      [restaurant_id]
-    );
-
-    const restaurant = restaurantResult.rows[0];
-
-// 4. Calculate Manhattan distance
-    const distance =
-      Math.abs(user.location_x - restaurant.location_x) +
-      Math.abs(user.location_y - restaurant.location_y);
-
-// 5. Convert distance to minutes
-    let estimatedTime;
-
-    if (distance <= 3) {
-      estimatedTime = 20;
-    } else if (distance <= 6) {
-      estimatedTime = 35;
-    } else {
-      estimatedTime = 50;
-    }
-
-    // create order with restaurant + ETA
-    const orderResult = await pool.query(
-      "INSERT INTO orders (user_id, restaurant_id, estimated_delivery_minutes) VALUES ($1, $2, $3) RETURNING id",
-      [user_id, restaurant_id, estimatedTime]
-    );
-
-    const orderId = orderResult.rows[0].id;
-
-
-    // insert order items
-    for (const item of items) {
-      await pool.query(
-        "INSERT INTO order_items (order_id, dish_id, quantity) VALUES ($1, $2, $3)",
-        [orderId, item.dish_id, item.quantity]
+    // 4. Create one order per restaurant
+    for (const restaurantId of Object.keys(groupedItems)) {
+      const restaurantResult = await pool.query(
+        "SELECT location_x, location_y FROM restaurants WHERE id = $1",
+        [restaurantId]
       );
+
+      const restaurant = restaurantResult.rows[0];
+
+      const distance =
+        Math.abs(user.location_x - restaurant.location_x) +
+        Math.abs(user.location_y - restaurant.location_y);
+
+      let estimatedTime;
+      if (distance <= 3) {
+        estimatedTime = 20;
+      } else if (distance <= 6) {
+        estimatedTime = 35;
+      } else {
+        estimatedTime = 50;
+      }
+
+      const orderResult = await pool.query(
+        `INSERT INTO orders (user_id, restaurant_id, estimated_delivery_minutes)
+         VALUES ($1, $2, $3)
+         RETURNING id`,
+        [user_id, restaurantId, estimatedTime]
+      );
+
+      const orderId = orderResult.rows[0].id;
+
+      for (const item of groupedItems[restaurantId]) {
+        await pool.query(
+          `INSERT INTO order_items (order_id, dish_id, quantity)
+           VALUES ($1, $2, $3)`,
+          [orderId, item.dish_id, item.quantity]
+        );
+      }
+
+      createdOrders.push({
+        order_id: orderId,
+        restaurant_id: Number(restaurantId),
+        estimated_delivery_minutes: estimatedTime
+      });
     }
 
-    res.status(201).json({ message: "Order created", order_id: orderId,   estimated_delivery_minutes: estimatedTime
+    res.status(201).json({
+      message: "Orders created",
+      orders: createdOrders
     });
 
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
   }
-
 });
 
 // get orders for a user
-app.get("/api/orders/:user_id", authenticateToken, async (req, res) => {
-  const { user_id } = req.params;
-
-  if (parseInt(user_id) !== req.user.id) {
-    return res.status(403).json({ error: "Forbidden" });
-  }
+app.get("/api/orders", authenticateToken, async (req, res) => {
+  const user_id = req.user.id;
 
   try {
     const result = await pool.query(
       `
-      SELECT o.id,
-             o.restaurant_id,
-             o.estimated_delivery_minutes,
-             o.created_at,
-             r.name AS restaurant_name
-      FROM orders o
-      JOIN restaurants r ON o.restaurant_id = r.id
-      WHERE o.user_id = $1
-      ORDER BY o.created_at DESC
+        SELECT
+          o.id AS order_id,
+          o.restaurant_id,
+          o.estimated_delivery_minutes,
+          o.created_at,
+          r.name AS restaurant_name,
+          d.name AS dish_name,
+          d.price,
+          oi.quantity
+        FROM orders o
+               JOIN restaurants r ON o.restaurant_id = r.id
+               JOIN order_items oi ON oi.order_id = o.id
+               JOIN dishes d ON d.id = oi.dish_id
+        WHERE o.user_id = $1
+          AND d.restaurant_id = o.restaurant_id
+        ORDER BY o.created_at DESC
       `,
       [user_id]
     );
 
-    res.json(result.rows);
+    const grouped = {};
+
+    result.rows.forEach(row => {
+      if (!grouped[row.order_id]) {
+        grouped[row.order_id] = {
+          id: row.order_id,
+          restaurant_name: row.restaurant_name,
+          estimated_delivery_minutes: row.estimated_delivery_minutes,
+          created_at: row.created_at,
+          items: [],
+          total_price: 0
+        };
+      }
+
+      grouped[row.order_id].items.push({
+        name: row.dish_name,
+        price: row.price,
+        quantity: row.quantity
+      });
+
+      grouped[row.order_id].total_price += row.price * row.quantity;
+    });
+
+    res.json(Object.values(grouped));
+
 
   } catch (err) {
     console.error(err);
@@ -329,36 +406,71 @@ app.get("/api/users/:userId/favorites", authenticateToken, async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
-      `
-        SELECT r.id,
-               r.name,
-               r.rating,
-               r.location_x,
-               r.location_y,
-               AVG(rv.rating)::numeric(10,1) AS user_rating
-        FROM restaurants r
-               JOIN reviews rv ON rv.restaurant_id = r.id
-        WHERE rv.user_id = $1
-          AND rv.dish_id IS NULL
-        GROUP BY r.id
-        ORDER BY user_rating DESC
-          LIMIT 3
-      `,
-      [userId]
-    );
 
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Database error" });
-  }
-});
+  // get user location
+  const userResult = await pool.query(
+    "SELECT location_x, location_y FROM users WHERE id = $1",
+    [userId]
+  );
+
+  const user = userResult.rows[0];
+
+  // get favorites
+  const result = await pool.query(
+    `
+      SELECT r.id,
+             r.name,
+             r.rating,
+             r.location_x,
+             r.location_y,
+             AVG(rv.rating)::numeric(10,1) AS user_rating
+      FROM restaurants r
+      JOIN reviews rv ON rv.restaurant_id = r.id
+      WHERE rv.user_id = $1
+        AND rv.dish_id IS NULL
+      GROUP BY r.id, r.location_x, r.location_y
+      ORDER BY user_rating DESC
+      LIMIT 3
+      `,
+    [userId]
+  );
+
+  // add distance + delivery time
+  const enriched = result.rows.map(r => {
+
+    const distance =
+      Math.abs(user.location_x - r.location_x) +
+      Math.abs(user.location_y - r.location_y);
+
+    let delivery_minutes;
+
+    if (distance <= 3) {
+      delivery_minutes = 20;
+    } else if (distance <= 6) {
+      delivery_minutes = 35;
+    } else {
+      delivery_minutes = 50;
+    }
+
+    return {
+      ...r,
+      distance_km: distance,
+      delivery_minutes: delivery_minutes
+    };
+  });
+
+  res.json(enriched);
+
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ error: "Database error" });
+    }
+    });
 
 // ---------------- AUTH ----------------
 
 // Register new user
-app.post("/api/register", async (req, res) => {
+app.post("/api/register", limiter, async (req, res) => {
 
   let { email, password, location_x, location_y, address } = req.body;
   email = email.trim().toLowerCase();
@@ -410,23 +522,67 @@ app.post("/api/login", async (req, res) => {
   try {
 
     const result = await pool.query(
-      `SELECT id, email, password, role
+      `SELECT id, email, password, role, failed_attempts, lock_until
        FROM users
        WHERE email = $1`,
       [email]
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid email or password"});
     }
 
     const user = result.rows[0];
 
+    if (user.lock_until && new Date(user.lock_until) > new Date()) {
+      return res.status(403).json({
+        error: "Account locked. Try again later.",
+        lock_until: user.lock_until
+      });
+    }
+
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid email or password" });
+
+      const attempts = Number(user.failed_attempts || 0) + 1;
+
+      // LOCK after 5 attempts
+      if (attempts >= 5) {
+
+        await pool.query(
+          `UPDATE users
+           SET failed_attempts = 0,
+               lock_until = NOW() + INTERVAL '5 minutes'
+           WHERE id = $1`,
+          [user.id]
+        );
+
+        return res.status(403).json({
+          error: "Too many failed attempts. Account locked for 5 minutes.",
+          lock_until: new Date(Date.now() + 5 * 60 * 1000)
+        });
+      }
+
+      await pool.query(
+        `UPDATE users SET failed_attempts = $1 WHERE id = $2`,
+        [attempts, user.id]
+      );
+
+      return res.status(401).json({
+        error: "Invalid email or password",
+        attempts_left: 5 - attempts
+      });
+
     }
+
+    await pool.query(
+      `UPDATE users
+       SET failed_attempts = 0,
+           lock_until = NULL
+       WHERE id = $1`,
+      [user.id]
+    );
 
     const token = jwt.sign(
       { id: user.id },
@@ -506,7 +662,7 @@ app.put("/api/users/:id/password", authenticateToken, async (req,res)=>{
 
 });
 
-app.put("/api/reset-password", async (req, res) => {
+app.put("/api/reset-password", limiter, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
