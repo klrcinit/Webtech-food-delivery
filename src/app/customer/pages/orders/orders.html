@@ -1,70 +1,114 @@
-<div class="orders-container">
-  <div class="orders-content">
+<div class="orders-container fade-in">
+  <!-- LOADING -->
+  <h2 class="page-title">📦 Orders</h2>
 
-<h2>Orders</h2>
+  <div class="tabs">
+    <button
+      [class.active]="activeTab === 'active'"
+      (click)="activeTab = 'active'">
+      Active Orders
+    </button>
 
-<div *ngIf="loading">
-  Loading orders...
-</div>
-
-<div *ngIf="!loading && orders.length === 0">
-  No orders yet.
-</div>
-
-<!-- ACTIVE ORDERS -->
-    <h3 *ngIf="hasActiveOrders()">Active Orders</h3>
-    <div *ngFor="let order of orders">
-      <div *ngIf="isActive(order)" class="order-card">
-    <h3>{{ order.restaurant_name }}</h3>
-        <p><strong>Total: €{{ order.total_price }}</strong></p>
-    <ul>
-      <li *ngFor="let item of order.items">
-        {{ item.name }} x{{ item.quantity }} – €{{ item.price }}
-      </li>
-    </ul>
-
-    <p>
-      Status:
-      <span *ngIf="getOrderStatus(order) === 'Preparing'">🍳 Preparing</span>
-      <span *ngIf="getOrderStatus(order) === 'On the way'">🚗 On the way</span>
-    </p>
-
-    <p>Arriving in {{ getRemainingMinutes(order) }} min</p>
-
-    <p style="color:#666;">
-      Ordered at: {{ order.created_at | date:'HH:mm' }}
-    </p>
-
+    <button
+      [class.active]="activeTab === 'previous'"
+      (click)="activeTab = 'previous'">
+      Previous Orders
+    </button>
   </div>
-</div>
+
+  <!-- LOADING SKELETON -->
+  <div *ngIf="loading" class="skeleton-wrapper">
+    <div class="order-card skeleton" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div *ngIf="!loading && orders.length === 0" class="empty-state">
+    <h3>No orders yet</h3>
+    <small>Start exploring restaurants and place your first order!</small>
+  </div>
+
+  <div class="tab-content-wrapper">
+  <!-- ACTIVE ORDERS -->
+    <div *ngIf="activeTab === 'active'" class="tab-content">
+
+      <div *ngFor="let order of getActiveOrders()">
+        <div class="order-card premium">
+
+          <div class="order-header">
+            <h3>{{ order.restaurant_name }}</h3>
+            <span class="status active pulse">{{ getOrderStatus(order) }}</span>
+          </div>
+
+          <ul class="items">
+            <li *ngFor="let item of order.items">
+              {{ item.name }} x{{ item.quantity }}
+              <span>€{{ item.price }}</span>
+            </li>
+          </ul>
+
+          <div class="order-footer">
+            <strong>Total: €{{ order.total_price | number:'1.2-2' }}</strong>
+            <button class="reorder-btn" (click)="reorder(order)">
+              🔁 Reorder
+            </button>
+          </div>
+
+          <span class="time">⏱ {{ getRemainingMinutes(order) }} min</span>
+          <div class="meta">Ordered at {{ order.created_at | date:'HH:mm' }}</div>
+
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getProgress(order)"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- EMPTY MESSAGE -->
+      <div *ngIf="getActiveOrders().length === 0" class="empty-state">
+        No active orders
+      </div>
+
+    </div>
 
 
-<!-- PREVIOUS ORDERS -->
-    <h3 *ngIf="hasPreviousOrders()">Previous Orders</h3>
+  <!-- PREVIOUS ORDERS -->
+      <div *ngIf="activeTab === 'previous'" class="tab-content">
+        <h3 class="section-title">📜 Previous Orders</h3>
 
-    <div *ngFor="let order of orders">
-      <div *ngIf="isPrevious(order)" class="order-card">
+      <div *ngFor="let order of orders">
+      <div *ngIf="isPrevious(order)" class="order-card premium">
 
-    <h3>{{ order.restaurant_name }}</h3>
+        <div class="order-header">
+          <h3>{{ order.restaurant_name }}</h3>
+          <span class="status delivered">Delivered</span>
+        </div>
 
-        <ul>
+        <ul class="items">
           <li *ngFor="let item of order.items">
-            {{ item.name }} x{{ item.quantity }} – €{{ item.price }}
+            {{ item.name }} x{{ item.quantity }}
+            <span>€{{ item.price }}</span>
           </li>
         </ul>
 
-        <p><strong>Total: €{{ order.total_price }}</strong></p>
+        <div class="order-footer">
+          <strong>Total: €{{ order.total_price | number:'1.2-2' }}</strong>
+          <button class="reorder-btn" (click)="reorder(order)">
+            🔁 Reorder
+          </button>
+        </div>
 
-    <p>Status: ✅ Delivered</p>
+        <span class="time">⏱ {{ getRemainingMinutes(order) }} min</span>
 
-    <p style="color:#666;">
-      Ordered at: {{ order.created_at | date:'HH:mm' }}
-    </p>
+        <div class="meta">Ordered at {{ order.created_at | date:'HH:mm' }}</div>
 
-  </div>
+    </div>
+      </div>
+
 </div>
-  </div>
 </div>
+</div>
+
+
 
 
 

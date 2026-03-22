@@ -21,6 +21,21 @@ export class Profile {
   constructor(private authService: AuthService, private toast: ToastService, private router: Router) {}
 
   ngOnInit() {
+
+    const userId = Number(localStorage.getItem("user_id"));
+
+    this.authService.getUser(userId).subscribe({
+      next: (user) => {
+        this.user.email = user.email;
+        this.user.address = user.address;
+        this.user.location_x = user.location_x;
+        this.user.location_y = user.location_y;
+      },
+      error: () => {
+        this.toast.show("Error loading profile");
+      }
+    });
+
     this.user.email = localStorage.getItem("email") || "";
     this.user.address = localStorage.getItem("address") || "";
     this.user.location_x = Number(localStorage.getItem("location_x")) || 0;
