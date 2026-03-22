@@ -10,52 +10,61 @@
       ({{ reviews.length || 0 }} reviews)
     </p>
 
-    <h3 class="margin-top-medium">🍜 Menu</h3>
-    <div *ngFor="let dish of restaurant?.dishes || []" class="dish-card">
+    <h3 class="margin-top-medium">Menu</h3>
+    <div *ngFor="let dish of restaurant?.dishes || []" class="menu-item">
 
-      <div class="dish-row">
         <div>
-          <strong>{{ dish.name }}</strong>
-          <div>{{ dish.price }} €</div>
-          <div class="dish-meta">
-            ★  {{ dish.rating | number:'1.1-1' }}
+          <h3>{{ dish.name }}</h3>
+          <div class="price">{{ dish.price }} €</div>
+
+          <div class="rating">
+            ⭐ {{ dish.rating | number:'1.1-1' }}
+            <div *ngIf="dish.user_rating !== null">
+              <small>✔ Your rating: {{ dish.user_rating }}⭐</small>
+            </div>
             <span *ngIf="dish.review_count > 0">
-                  ({{ dish.review_count }} ratings)
-            </span>
+        ({{ dish.review_count }} ratings)
+      </span>
           </div>
-        </div>
 
-        <div>
-          <button (click)="addToCart(dish)">
-            Add to Cart
+        <div class="menu-actions">
+          <button class="add-btn" (click)="addToCartWithAnimation(dish)">
+            Add to cart
           </button>
 
-          <button class="rate-btn"
-                  (click)="selectedDish = dish; dishRating = 0; hoverRating = 0">
+          <button
+            class="rate-btn"
+            *ngIf="dish.user_rating === null"
+            (click)="selectedDish = dish; dishRating = 0; hoverRating = 0">
             ⭐ Rate dish
           </button>
+
+          <!-- če JE že ocenjen -->
+          <button
+            class="rate-btn"
+            *ngIf="dish.user_rating !== null"
+            (click)="selectedDish = dish; dishRating = dish.user_rating">
+            ✏️ Edit rating
+          </button>
         </div>
-      </div>
 
-      <div *ngIf="selectedDish?.id === dish.id"
-           class="margin-top-small">
+        <div *ngIf="selectedDish?.id === dish.id" class="dish-rating-box">
+    <span
+      *ngFor="let star of stars"
+      (click)="dishRating = star"
+      (mouseenter)="hoverRating = star"
+      (mouseleave)="hoverRating = 0"
+      [style.color]="star <= hoverRating || star <= dishRating ? '#FFC107' : '#ddd'"
+      class="star small">
+      ★
+    </span>
 
-        <span
-          *ngFor="let star of stars"
-          (click)="dishRating = star"
-          (mouseenter)="hoverRating = star"
-          (mouseleave)="hoverRating = 0"
-          [style.color]="star <= hoverRating || star <= dishRating ? '#FFC107' : '#ddd'"
-          class="star small">
-★
-</span>
-
-        <button (click)="reviewDish(dish)" class="submit-btn">
-          Submit
-        </button>
+          <button (click)="reviewDish(dish)" class="submit-btn">
+            Submit
+          </button>
+        </div>
 
       </div>
-  </div>
   </div>
   <button (click)="showReviewForm = !showReviewForm"
           class="review-btn">
@@ -98,18 +107,27 @@
 
   <h3>Customer Reviews</h3>
 
-  <div *ngFor="let r of reviews" class="review-card">
-    <div>
- <span *ngFor="let star of [].constructor(Math.round(r.rating))"
-       class="star review"> ⭐
-</span>
+    <div class="review-card" *ngFor="let r of reviews">
+
+      <strong>
+        {{ r.user_id === userId ? 'You' : 'Customer' }}
+      </strong>
+
+      <div>
+    <span *ngFor="let star of [].constructor(Math.round(r.rating))"
+          class="star review">
+      ⭐
+    </span>
+      </div>
+
+      <p>{{ r.comment }}</p>
+
+      <small class="review-date">
+        {{ r.created_at | date:'short' }}
+      </small>
     </div>
 
-    <p>{{ r.comment }}</p>
 
-    <small class="review-date">
-      {{ r.created_at | date:'short' }}
-    </small>
-  </div>
 
+</div>
 </div>

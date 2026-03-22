@@ -157,4 +157,15 @@ export class RestaurantDetail implements OnInit {
   }
 
   protected readonly Math = Math;
+
+  addToCartWithAnimation(dish: any) {
+    this.addToCart(dish);
+
+    dish.added = true;
+
+    setTimeout(() => {
+      dish.added = false;
+    }, 300);
+  }
+
 }
