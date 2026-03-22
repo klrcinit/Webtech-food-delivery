@@ -10,4 +10,5 @@ export interface Order {
     quantity: number;
   }[];
   total_price: number;
+  progress?: number;
 }
