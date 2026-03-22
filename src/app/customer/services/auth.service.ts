@@ -48,4 +48,7 @@ export class AuthService {
       data
     );
   }
+  getUser(userId: number) {
+    return this.http.get<any>(`http://localhost:3000/api/users/${userId}`);
+  }
 }
