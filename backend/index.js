@@ -47,13 +47,20 @@ app.get("/api/restaurants/:id", authenticateToken, async (req,res)=>{
 
   const dishes = await pool.query(
     `SELECT d.*,
+            (
+              SELECT rating
+              FROM reviews
+              WHERE dish_id = d.id
+                AND user_id = $2
+              LIMIT 1
+       ) AS user_rating,
           COUNT(r.id) AS review_count
    FROM dishes d
    LEFT JOIN reviews r ON r.dish_id = d.id
    WHERE d.restaurant_id = $1
-   GROUP BY d.id
+   GROUP BY d.id, d.name, d.price, d.rating, d.restaurant_id
    ORDER BY d.id`,
-    [id]
+    [id, req.user.id]
   );
 
   res.json({
@@ -305,11 +312,38 @@ app.post("/api/reviews", authenticateToken, async (req, res) => {
 
   try {
 
-    await pool.query(
-      `INSERT INTO reviews (user_id, restaurant_id, dish_id, rating, comment)
-       VALUES ($1,$2,$3,$4,$5)`,
-      [user_id, restaurant_id, dish_id || null, rating, comment]
+    const existing = await pool.query(
+      `SELECT id FROM reviews
+   WHERE user_id = $1
+     AND restaurant_id = $2
+     AND (
+       (dish_id = $3)
+       OR (dish_id IS NULL AND $3 IS NULL)
+     )`,
+      [user_id, restaurant_id, dish_id || null]
     );
+
+    if (existing.rows.length > 0) {
+      await pool.query(
+        `UPDATE reviews
+     SET rating = $1,
+         comment = $2,
+         created_at = NOW()
+     WHERE user_id = $3
+       AND restaurant_id = $4
+       AND (
+         (dish_id = $5)
+         OR (dish_id IS NULL AND $5 IS NULL)
+       )`,
+        [rating, comment, user_id, restaurant_id, dish_id || null]
+      );
+    } else {
+      await pool.query(
+        `INSERT INTO reviews (user_id, restaurant_id, dish_id, rating, comment)
+     VALUES ($1,$2,$3,$4,$5)`,
+        [user_id, restaurant_id, dish_id || null, rating, comment]
+      );
+    }
 
     // update restaurant average rating
     await pool.query(
@@ -354,7 +388,7 @@ app.get("/api/restaurants/:id/reviews", authenticateToken, async (req, res) => {
   try {
 
     const result = await pool.query(
-      `SELECT restaurant_id, dish_id, rating, comment, created_at
+      `SELECT user_id, restaurant_id, dish_id, rating, comment, created_at
        FROM reviews
        WHERE restaurant_id = $1
        AND dish_id IS NULL
@@ -428,6 +462,7 @@ app.get("/api/users/:userId/favorites", authenticateToken, async (req, res) => {
       JOIN reviews rv ON rv.restaurant_id = r.id
       WHERE rv.user_id = $1
         AND rv.dish_id IS NULL
+      AND rv.rating >= 4
       GROUP BY r.id, r.location_x, r.location_y
       ORDER BY user_rating DESC
       LIMIT 3
@@ -715,6 +750,34 @@ function authenticateToken(req, res, next) {
 
   });
 }
+
+app.get("/api/users/:id", authenticateToken, async (req, res) => {
+
+  const { id } = req.params;
+
+  if (parseInt(id) !== req.user.id) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  try {
+
+    const result = await pool.query(
+      "SELECT id, email, address, location_x, location_y FROM users WHERE id = $1",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 
 app.put("/api/users/:id", authenticateToken, async (req, res) => {
 
